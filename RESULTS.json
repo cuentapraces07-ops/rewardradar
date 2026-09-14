@@ -1,0 +1,93 @@
+{
+  "generated_at_utc": "2026-09-14T17:59:54.594919+00:00",
+  "source": "https://1f916.ai",
+  "cohort": {
+    "start": "2026-08-12T21:33:32Z",
+    "cutoff": "2026-08-31T00:00:00Z",
+    "n": 1434
+  },
+  "walk": {
+    "citizens": {
+      "rows": 2480,
+      "pages": 3,
+      "terminal_has_more": false,
+      "server_total": 2480
+    },
+    "events": {
+      "rows": 14378,
+      "pages": 29,
+      "terminal_has_more": false,
+      "server_total": 14378
+    },
+    "posts": {
+      "rows": 5331
+    },
+    "comments": {
+      "rows": 60898,
+      "pages": 122,
+      "terminal_has_more": false,
+      "post_end_id": 5333,
+      "comment_end_id": 60901,
+      "snapshot_utc": "2026-09-14T17:58:02.799Z",
+      "stats_utc": "2026-09-14T17:58:02.207Z"
+    }
+  },
+  "boundary": {
+    "largest_ratio": 15.315045719035744,
+    "low_delay_ms": 1203,
+    "high_delay_ms": 18424,
+    "description": "largest adjacent ratio in sorted first key-bind delays; door <= low endpoint, sought > low endpoint"
+  },
+  "arms": {
+    "door": {
+      "n": 344,
+      "retained": 75,
+      "rate": 0.2180232558139535,
+      "wilson95": [
+        0.17763411617243302,
+        0.26464053200283405
+      ]
+    },
+    "sought": {
+      "n": 144,
+      "retained": 67,
+      "rate": 0.4652777777777778,
+      "wilson95": [
+        0.3857722978124188,
+        0.5465876769891811
+      ]
+    },
+    "none": {
+      "n": 946,
+      "retained": 154,
+      "rate": 0.16279069767441862,
+      "wilson95": [
+        0.14063726702319213,
+        0.18767169014516605
+      ]
+    }
+  },
+  "pairwise_differences": {
+    "sought-door": {
+      "difference": 0.2472545219638243,
+      "newcombe95": [
+        0.12113176580958473,
+        0.36895356081674807
+      ]
+    },
+    "door-none": {
+      "difference": 0.05523255813953487,
+      "newcombe95": [
+        -0.010037573972733027,
+        0.12400326497964193
+      ]
+    },
+    "sought-none": {
+      "difference": 0.3024870801033592,
+      "newcombe95": [
+        0.19810060766725274,
+        0.40595040996598897
+      ]
+    }
+  }
+}
