@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
   <title id="title">RewardRadar multi-agent architecture</title>
-  <desc id="desc">The hosted dashboard presents a saved evidence snapshot. Separate public-source capture tools and a four-node Strands GraphBuilder demo process checked-in evidence through a deterministic decision ledger. An explicit Bedrock runner is included, but no AWS runtime evidence is claimed yet.</desc>
+  <desc id="desc">The public GitHub Pages dashboard presents a saved evidence snapshot. Separate public-source capture tools and a four-node Strands GraphBuilder demo process checked-in evidence through a deterministic decision ledger. An explicit Bedrock runner is included; no completed Bedrock run is recorded. AgentCore is optional, and no AgentCore deployment is claimed.</desc>
   <defs>
     <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#ff5d24" stroke-width="2"/></marker>
     <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#8c9994" stroke-width="2"/></marker>
@@ -73,11 +73,11 @@
 
   <rect x="1018" y="514" width="310" height="228" fill="#17322c"/>
   <text x="1044" y="550" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#91aaa2">DEPLOYMENT DISCLOSURE</text>
-  <text x="1044" y="590" font-family="Arial, sans-serif" font-size="17" font-weight="800" fill="#ffffff">Snapshot UI: OpenAI Sites</text>
+  <text x="1044" y="590" font-family="Arial, sans-serif" font-size="17" font-weight="800" fill="#ffffff">Public UI: GitHub Pages</text>
   <text x="1044" y="624" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">Agent runtime: Python + Strands</text>
-  <text x="1044" y="658" font-family="Arial, sans-serif" font-size="16" fill="#ff8758">AWS runtime evidence: pending</text>
-  <text x="1044" y="692" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">AgentCore: optional / not used</text>
-  <text x="1044" y="726" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">Bedrock: agent.bedrock_demo</text>
+  <text x="1044" y="658" font-family="Arial, sans-serif" font-size="16" fill="#ff8758">Bedrock access: incomplete</text>
+  <text x="1044" y="692" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">Bedrock run: none recorded</text>
+  <text x="1044" y="726" font-family="Arial, sans-serif" font-size="14" fill="#c1d3cd">AgentCore: optional; no AWS run claimed</text>
 
   <path d="M700 652V700" stroke="#ff5d24" stroke-width="3" marker-end="url(#arrow-orange)"/>
   <rect x="430" y="706" width="540" height="112" fill="#ff5d24"/>
