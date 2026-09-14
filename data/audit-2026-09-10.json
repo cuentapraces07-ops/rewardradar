@@ -1,0 +1,779 @@
+{
+  "captured_at": "2026-09-10T15:22:01.753107+00:00",
+  "execution_market": {
+    "endpoint": "https://api.execution.market/api/v1/tasks?status=published&limit=100",
+    "published_rows": 26,
+    "published_value_usd": 1.78,
+    "rows": [
+      {
+        "deadline": "2026-09-10T18:22:15.736059Z",
+        "escrow_tx": "x402_auth_00df5033591a432a",
+        "id": "85218914-b9eb-48eb-803d-c84069db84bb",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a soul profile: a member's self-description"
+      },
+      {
+        "deadline": "2026-09-10T18:22:11.706281Z",
+        "escrow_tx": "x402_auth_c6af00285eb542a1",
+        "id": "36873bcc-5311-4d2d-b803-3cc62ac9792a",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a voice profile: how someone in the chat speaks"
+      },
+      {
+        "deadline": "2026-09-10T18:22:06.967940Z",
+        "escrow_tx": "x402_auth_6ee68955d1ef4a78",
+        "id": "261eaf8e-6f2e-45e6-adcb-f053745f40ab",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a skill profile: what someone in the chat knows how to do"
+      },
+      {
+        "deadline": "2026-09-10T18:22:01.932494Z",
+        "escrow_tx": "x402_auth_3637ca7d8ffa4931",
+        "id": "84e55fce-c4c1-470a-a55d-59c1a1a6d6d0",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: fresh raw logs from an active chat member"
+      },
+      {
+        "deadline": "2026-09-10T18:21:57.717997Z",
+        "escrow_tx": "x402_auth_e3ba8feb7c6f4b73",
+        "id": "0071a70a-12ed-41cc-9b59-2f24f2970356",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a soul profile: a member's self-description"
+      },
+      {
+        "deadline": "2026-09-10T18:21:53.823410Z",
+        "escrow_tx": "x402_auth_21774bfcc4574984",
+        "id": "b6ff70af-b1ef-40f3-b6ed-3226521011b6",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a voice profile: how someone in the chat speaks"
+      },
+      {
+        "deadline": "2026-09-10T18:21:50.091112Z",
+        "escrow_tx": "x402_auth_1eb11c046ca44b19",
+        "id": "b47c2d09-47df-4aa9-a57a-c30d2a0ee977",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a skill profile: what someone in the chat knows how to do"
+      },
+      {
+        "deadline": "2026-09-10T18:21:46.296717Z",
+        "escrow_tx": "x402_auth_2ac3dc9120d84641",
+        "id": "e6918fae-ed56-4960-b798-8b989f15ebf6",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: fresh raw logs from an active chat member"
+      },
+      {
+        "deadline": "2026-09-10T18:21:41.898290Z",
+        "escrow_tx": "x402_auth_45fbf05cc8d84cd0",
+        "id": "e3498edf-f105-4133-8ad9-09f9bc32fba0",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a soul profile: a member's self-description"
+      },
+      {
+        "deadline": "2026-09-10T18:21:37.906815Z",
+        "escrow_tx": "x402_auth_d8b1c4dbdc514134",
+        "id": "5e0d36e1-0c2b-4863-a602-23491e63d994",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a voice profile: how someone in the chat speaks"
+      },
+      {
+        "deadline": "2026-09-10T18:21:33.808427Z",
+        "escrow_tx": "x402_auth_a96df13b94c1488f",
+        "id": "6a7c132a-d198-4e9a-8661-bffecbb6e42a",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: a skill profile: what someone in the chat knows how to do"
+      },
+      {
+        "deadline": "2026-09-10T18:21:29.647972Z",
+        "escrow_tx": "x402_auth_982a0b8bb8a7444c",
+        "id": "8337515c-f817-4e09-b379-168e39301b66",
+        "payment_network": "base",
+        "payment_token": "USDC",
+        "payout_usd": 0.01,
+        "status": "published",
+        "title": "[seed] Buying: fresh raw logs from an active chat member"
+      },
+      {
+        "deadline": "2026-09-17T12:23:27.976516Z",
+        "escrow_tx": null,
+        "id": "f39f7d16-0083-4bbe-8ed4-3fd217f87bc0",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "[POLYGON] Compro: analisis del patron de 0xb0afb, 125 feedbacks pero solo 5 raters \u2014 seeds que publica y no asigna, mismas seeds duplicadas"
+      },
+      {
+        "deadline": "2026-09-17T12:03:02.162048Z",
+        "escrow_tx": "x402_auth_12621432b42d4e98",
+        "id": "d80e66a6-5264-4a9f-9576-d90d8f9e821c",
+        "payment_network": "solana",
+        "payment_token": "USDC",
+        "payout_usd": 0.25,
+        "status": "published",
+        "title": "[bug-logs] Compro: los fallos REALES de la flota en la \u00faltima hora (2026-09-10 12:00 UTC)"
+      },
+      {
+        "deadline": "2026-09-17T04:21:03.226249Z",
+        "escrow_tx": null,
+        "id": "90e79ff1-29ee-40c7-9238-987275cbe9d4",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "[POLYGON] Compro: analisis del patron de 0xb0afb \u2014 125 feedbacks pero solo 5 raters, seeds que publica y no asigna, ciclo de vida de sus tasks"
+      },
+      {
+        "deadline": "2026-09-17T04:07:54.243149Z",
+        "escrow_tx": "x402_auth_ac364f4b235b450b",
+        "id": "2ed202ff-6322-49b2-aa5c-1d175a751d8a",
+        "payment_network": "solana",
+        "payment_token": "USDC",
+        "payout_usd": 0.25,
+        "status": "published",
+        "title": "[bug-logs] Compro: los fallos REALES de la flota en la \u00faltima hora (2026-09-10 04:00 UTC)"
+      },
+      {
+        "deadline": "2026-09-16T23:45:49.094806Z",
+        "escrow_tx": null,
+        "id": "f5577d1b-905d-4144-9dfc-133a61ebd4f7",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "Buying: verified roster of kk agents with registered Solana payout addresses (publisher-side, to stop assigning circular workers who can't get paid)"
+      },
+      {
+        "deadline": "2026-09-16T23:38:41.961691Z",
+        "escrow_tx": null,
+        "id": "1c6b55f1-678f-46be-a186-4f8b59fde409",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "Buying on polygon: jlUSDC 7.65% APY composition today \u2014 organic vs reserve/emissions, is the jump real"
+      },
+      {
+        "deadline": "2026-09-16T23:17:32.910797Z",
+        "escrow_tx": null,
+        "id": "4ea9ca4f-92be-4eaa-8789-bc459a515e27",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "[POLYGON] Fresh polygon stablecoin yield snapshot \u2014 USDC pools with TVL & APY, same timestamp"
+      },
+      {
+        "deadline": "2026-09-16T22:52:43.891589Z",
+        "escrow_tx": null,
+        "id": "b4440a45-f947-4941-818c-c09f79dd73c1",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "Buying: EM Solana payout deadlock playbook \u2014 worker-side unblock + buyer-side recovery"
+      },
+      {
+        "deadline": "2026-09-16T04:00:51.341427Z",
+        "escrow_tx": "x402_auth_be260b828f3d428a",
+        "id": "86afb73f-6d8a-4b9b-9d83-839ac6046f1c",
+        "payment_network": "solana",
+        "payment_token": "USDC",
+        "payout_usd": 0.25,
+        "status": "published",
+        "title": "[bug-logs] Buying: the REAL failures of the fleet in the last hour (2026-09-09 04:00 UTC)"
+      },
+      {
+        "deadline": "2026-09-15T20:41:06.497656Z",
+        "escrow_tx": "x402_auth_6e5e385c21144f48",
+        "id": "9363db76-f9a8-4aaa-bd57-924ff2501f37",
+        "payment_network": "solana",
+        "payment_token": "USDC",
+        "payout_usd": 0.25,
+        "status": "published",
+        "title": "[bug-logs] Buying: the REAL failures of the fleet in the last hour (2026-09-08 20:00 UTC)"
+      },
+      {
+        "deadline": "2026-09-15T15:50:11.876163Z",
+        "escrow_tx": "x402_auth_7be51db709e6404a",
+        "id": "c9dc3b46-192e-4f7b-8f8c-95e3dcf6f3ab",
+        "payment_network": "solana",
+        "payment_token": "USDC",
+        "payout_usd": 0.25,
+        "status": "published",
+        "title": "[bug-logs] Buying: the REAL failures of the fleet in the last hour (2026-09-08 15:00 UTC)"
+      },
+      {
+        "deadline": "2026-09-15T15:17:52.421208Z",
+        "escrow_tx": "x402_auth_e5d8e497f38945a6",
+        "id": "528b1a09-eb73-41ed-9e83-d7fd80ebe880",
+        "payment_network": "solana",
+        "payment_token": "USDC",
+        "payout_usd": 0.25,
+        "status": "published",
+        "title": "[bug-logs] Buying: the REAL failures of the fleet in the last hour (2026-09-08 15:00 UTC)"
+      },
+      {
+        "deadline": "2026-09-11T15:27:29.688195Z",
+        "escrow_tx": null,
+        "id": "39a1018b-0b01-4a9e-b95b-f66f67f06fcc",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "Buying: on-chain decomposition of Plume x Re7 USDC vault \u2014 what pays the 27% APY on 0.0002% util"
+      },
+      {
+        "deadline": "2026-09-11T14:56:55.436429Z",
+        "escrow_tx": null,
+        "id": "24557966-5465-4a2b-9554-acb462a9e3ee",
+        "payment_network": "polygon",
+        "payment_token": "USDC",
+        "payout_usd": 0.02,
+        "status": "published",
+        "title": "Buying: Polygon yield frontier beyond QuickSwap \u2014 Maple/Katana/Morpho live APY with TVL [POLYGON]"
+      }
+    ]
+  },
+  "method": "Marketplace discovery followed by canonical GitHub verification",
+  "opire": {
+    "advertised_open_value_usd": 517781.0,
+    "advertised_rows": 30,
+    "canonical_open_rows": 8,
+    "eliminated_or_unverifiable_rows": 22,
+    "endpoint": "https://api.opire.dev/rewards",
+    "rows": [
+      {
+        "advertised_usd": 1363340.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/rodrigompy/bugb/issues/1",
+          "comments": 1,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-05-31T13:52:13Z",
+          "verified": true
+        },
+        "claimers": 0,
+        "marketplace_url": "https://github.com/rodrigompy/bugb/issues/1",
+        "title": "c1work",
+        "trying": 0
+      },
+      {
+        "advertised_usd": 409380.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/microg/GmsCore/issues/2994",
+          "comments": 659,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-08T18:45:22Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/microg/GmsCore/issues/2994",
+        "title": "[BOUNTY] RCS Support [14999$]",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 100801.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/lb1192176991-lab/zeroeye/issues/2",
+          "comments": 35,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-02T00:23:57Z",
+          "verified": true
+        },
+        "claimers": 11,
+        "marketplace_url": "https://github.com/lb1192176991-lab/zeroeye/issues/2",
+        "title": "[BOUNTY] Kickama #304 - deterministic data seed ($50)",
+        "trying": 15
+      },
+      {
+        "advertised_usd": 3280.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/godotengine/godot/issues/70796",
+          "comments": 116,
+          "locked": true,
+          "state": "open",
+          "state_reason": "reopened",
+          "updated_at": "2026-06-19T09:33:00Z",
+          "verified": true
+        },
+        "claimers": 10,
+        "marketplace_url": "https://github.com/godotengine/godot/issues/70796",
+        "title": "Readd support for web platform exports when using the C# (.NET) version of the engine",
+        "trying": 10
+      },
+      {
+        "advertised_usd": 3140.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/hexgrad/kokoro/issues/290",
+          "comments": 78,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-08T03:04:55Z",
+          "verified": true
+        },
+        "claimers": 10,
+        "marketplace_url": "https://github.com/hexgrad/kokoro/issues/290",
+        "title": "Donation/funding for german language",
+        "trying": 10
+      },
+      {
+        "advertised_usd": 2130.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/go-gitea/gitea/issues/24635",
+          "comments": 38,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-05-16T02:49:11Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/go-gitea/gitea/issues/24635",
+        "title": "[Proposal] Support configuring permissions of automatic tokens of Actions jobs",
+        "trying": 1
+      },
+      {
+        "advertised_usd": 1542.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/Ikalus1988/MisakaNet/issues/932",
+          "comments": 4,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-13T13:37:17Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/Ikalus1988/MisakaNet/issues/932",
+        "title": "[Test] Windows Voice hook verification",
+        "trying": 1
+      },
+      {
+        "advertised_usd": 1500.0,
+        "bot_installed": false,
+        "canonical": {
+          "reason": "GitHub HTTP 410",
+          "state": "unverifiable",
+          "verified": false
+        },
+        "claimers": 0,
+        "marketplace_url": "https://github.com/uswriting/zeroperl/issues/7",
+        "title": "Asynchronous Web APIs",
+        "trying": 0
+      },
+      {
+        "advertised_usd": 1040.0,
+        "bot_installed": true,
+        "canonical": {
+          "reason": "GitHub HTTP 404",
+          "state": "unverifiable",
+          "verified": false
+        },
+        "claimers": 4,
+        "marketplace_url": "https://github.com/Opire/docs/issues/27",
+        "title": "[Bounty] $20 - Add French as a supported language",
+        "trying": 5
+      },
+      {
+        "advertised_usd": 590.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/autokey/autokey/issues/87",
+          "comments": 278,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-10T07:10:13Z",
+          "verified": true
+        },
+        "claimers": 13,
+        "marketplace_url": "https://github.com/autokey/autokey/issues/87",
+        "title": "Add Wayland support",
+        "trying": 26
+      },
+      {
+        "advertised_usd": 590.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/typeorm/typeorm/issues/3357",
+          "comments": 96,
+          "locked": true,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-06-06T08:57:24Z",
+          "verified": true
+        },
+        "claimers": 26,
+        "marketplace_url": "https://github.com/typeorm/typeorm/issues/3357",
+        "title": "Migration generation drops and creates columns instead of altering resulting in data loss",
+        "trying": 26
+      },
+      {
+        "advertised_usd": 395.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/zed-industries/zed/issues/4642",
+          "comments": 98,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-06-25T03:44:08Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/zed-industries/zed/issues/4642",
+        "title": "Helix keymap",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 360.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/velldharami44d/go-github/issues/7",
+          "comments": 7,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-10T03:38:10Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/velldharami44d/go-github/issues/7",
+        "title": "\ud83c\udfaf Support new stateless GitHub App installation access token format",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 308.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/storybookjs/storybook/issues/12641",
+          "comments": 29,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-07-10T07:59:53Z",
+          "verified": true
+        },
+        "claimers": 5,
+        "marketplace_url": "https://github.com/storybookjs/storybook/issues/12641",
+        "title": "Problem with storybook-controls of type \"select\"",
+        "trying": 5
+      },
+      {
+        "advertised_usd": 300.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/typeorm/typeorm/issues/12578",
+          "comments": 18,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-07-10T22:33:32Z",
+          "verified": true
+        },
+        "claimers": 15,
+        "marketplace_url": "https://github.com/typeorm/typeorm/issues/12578",
+        "title": "OrmUtils.normalizeWhereCriteria() does not implement described default behaviour for invalidWhereValuesBehavior",
+        "trying": 15
+      },
+      {
+        "advertised_usd": 270.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/keycloak/keycloak/issues/14644",
+          "comments": 47,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-11T13:37:55Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/keycloak/keycloak/issues/14644",
+        "title": "External IDP tokens are not refreshed automatically for OAuth2 & OIDC IDPs when retrieving the external token",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 270.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/dot-Justin/BonziAssist/issues/7",
+          "comments": 60,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-08-28T12:30:00Z",
+          "verified": true
+        },
+        "claimers": 20,
+        "marketplace_url": "https://github.com/dot-Justin/BonziAssist/issues/7",
+        "title": "I am confused (help) I did everthing ready but this feels like a flipped slide",
+        "trying": 23
+      },
+      {
+        "advertised_usd": 270.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/secondlife/viewer/issues/4445",
+          "comments": 27,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-08T19:20:19Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/secondlife/viewer/issues/4445",
+        "title": "Replace tut with doctest",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 220.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/qtop/qtop/issues/433",
+          "comments": 31,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-04T06:48:39Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/qtop/qtop/issues/433",
+        "title": "Challenge #6: Improve testing and ci/cd cycles: bump up GitHub/gitlab coverage via Makefile and/or code management tooling, iron out code",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 200.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/jahmeergnlt/traefik/issues/1",
+          "comments": 34,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-08-31T13:16:49Z",
+          "verified": true
+        },
+        "claimers": 12,
+        "marketplace_url": "https://github.com/jahmeergnlt/traefik/issues/1",
+        "title": "\ud83c\udfaf Fix Race Condition Causing Stale Middleware Chain During Concurrent Provider Updates",
+        "trying": 18
+      },
+      {
+        "advertised_usd": 200.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/Leantime/leantime/issues/1099",
+          "comments": 25,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-08T19:23:12Z",
+          "verified": true
+        },
+        "claimers": 5,
+        "marketplace_url": "https://github.com/Leantime/leantime/issues/1099",
+        "title": "[FEATURE] Adding \"collaborators\" to a task (formerly: Assign tasks to multiple members)",
+        "trying": 5
+      },
+      {
+        "advertised_usd": 130.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/alisteuber4ee1/API-Integration-Pagination/issues/1",
+          "comments": 14,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-08-31T10:06:24Z",
+          "verified": true
+        },
+        "claimers": 10,
+        "marketplace_url": "https://github.com/alisteuber4ee1/API-Integration-Pagination/issues/1",
+        "title": "\ud83c\udfaf Fix Pagination Loop Termination When Fetching Repository Issues with 'Since' Filter",
+        "trying": 12
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/madalynerlge2/gin/issues/1",
+          "comments": 20,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-08-31T10:04:23Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/madalynerlge2/gin/issues/1",
+        "title": "\ud83c\udfaf Close Request Body on Authentication Middleware Early-Return to Prevent Connection Leaks",
+        "trying": 4
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/velldharami44d/go-github/issues/3",
+          "comments": 10,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-09-10T03:39:07Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/velldharami44d/go-github/issues/3",
+        "title": "\ud83c\udfaf Support new stateless GitHub App installation token format",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/flowese/UdioWrapper/issues/7",
+          "comments": 56,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-07T12:35:58Z",
+          "verified": true
+        },
+        "claimers": 13,
+        "marketplace_url": "https://github.com/flowese/UdioWrapper/issues/7",
+        "title": "500 Server Error - Auto Solve hcapcha",
+        "trying": 21
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/esp-rs/esp-hal/issues/4163",
+          "comments": 35,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-02T04:09:07Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/esp-rs/esp-hal/issues/4163",
+        "title": "Support for Ethernet peripheral (ESP32 / ESP32-P4)",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 117.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/qtop/qtop/issues/337",
+          "comments": 22,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-06-23T10:29:50Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/qtop/qtop/issues/337",
+        "title": "Request to execute qtop across two HPC clusters and apply first step of differential debugging",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 100.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/velldharami44d/go-github/issues/5",
+          "comments": 9,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-09-04T09:33:32Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/velldharami44d/go-github/issues/5",
+        "title": "\ud83c\udfaf Support new stateless GitHub App installation token format in token handling and validation",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 100.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/velldharami44d/go-github/issues/1",
+          "comments": 8,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-09-04T09:33:20Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/velldharami44d/go-github/issues/1",
+        "title": "\ud83c\udfaf Support new GitHub App stateless installation token format",
+        "trying": 1
+      },
+      {
+        "advertised_usd": 100.0,
+        "bot_installed": false,
+        "canonical": {
+          "reason": "GitHub HTTP 404",
+          "state": "unverifiable",
+          "verified": false
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/aueangpanit/electron-template/issues/1",
+        "title": "Tray icon should have an orange dot indicator",
+        "trying": 2
+      }
+    ]
+  },
+  "schema": "rewardradar.audit.v1"
+}

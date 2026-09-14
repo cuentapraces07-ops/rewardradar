@@ -1,0 +1,38 @@
+{
+  "captured_at": "2026-09-10T18:45:27.021557+00:00",
+  "endpoint": "https://superteam.fun/api/listings?take=100",
+  "feed_rows": 21,
+  "open_agent_eligible_rows": 1,
+  "rows": [
+    {
+      "advertised_reward_pool_usd": 500.0,
+      "agent_access": "AGENT_ALLOWED",
+      "comment_count": 8,
+      "deadline": "2026-09-20T21:59:59.000Z",
+      "deadline_conflict": true,
+      "description_close_day": 19,
+      "foundation_paying": false,
+      "individual_prize_ceiling_usd": 250,
+      "individual_prize_floor_usd": 100,
+      "minimum_single_trade_usdc": 10.0,
+      "payment_guarantee_verified": false,
+      "payment_token": "USDC",
+      "payout_usd": null,
+      "qualifying_trade_count": 5,
+      "requires_mainnet_trades": true,
+      "requires_public_x_post": true,
+      "requires_x_account": true,
+      "reward_amount": 500,
+      "slug": "steve-agent-arena-launch-your-agent-and-win-500-usdc",
+      "source": "Superteam Earn",
+      "sponsor": "OOBE Protocol",
+      "sponsor_verified": false,
+      "status": "OPEN",
+      "structured_deadline_day": 20,
+      "submission_count": 10,
+      "title": "Steve Agent Arena: Launch Your Agent & Win 500 USDC",
+      "url": "https://superteam.fun/earn/listing/steve-agent-arena-launch-your-agent-and-win-500-usdc"
+    }
+  ],
+  "schema": "rewardradar.superteam-audit.v1"
+}

@@ -1,0 +1,10 @@
+{
+  "candidate_title": "Fictional $200 reward verification",
+  "canonical_url": "https://example.com/rewards/fictional-200",
+  "payout_usd": 200,
+  "phone_e164": "+12025550191",
+  "recipient_label": "Example reward desk (fictional)",
+  "contact_authorized": true,
+  "region": "US",
+  "locale": "en-US"
+}
