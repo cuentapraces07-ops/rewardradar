@@ -66,7 +66,18 @@ The hosted-model proof uses `fixture_only=True`, which exposes exactly one check
 
 For a high-value candidate with an explicitly authorized contact, RewardRadar can prepare one structured phone-verification intent. Install the optional pinned SDK with `pip install -r requirements-calle.txt`, then run the command above to see a **network-free preview**. The committed example uses a reserved fictional number that the live path permanently refuses to call.
 
-The preview masks the destination, discloses the AI caller, fixes the allowed questions, uses an intent-bound idempotency key, and requires the exact `PLACE_ONE_CALL` gate before the SDK can place one call. Even a completed call is only a lead: `reconcile_call` keeps `payout_verified=false` until the returned HTTPS source is checked independently. No live CALL-E call or contest eligibility is claimed in the current build.
+The preview masks the destination, discloses the AI caller, fixes the allowed questions, uses an intent-bound idempotency key, and requires the exact `PLACE_ONE_CALL` gate before the SDK can place one call. Even a completed call is only a lead: `reconcile_call` keeps `payout_verified=false` until the returned HTTPS source is checked independently. No live CALL-E call or contest eligibility is claimed in v0.2.
+
+### Alexa+ MCP prototype
+
+The repository includes a credential-free self-hosted MCP endpoint for the
+Alexa+ track. Run `python -m agent.alexa_mcp_server --port 8787` and send
+JSON-RPC requests to `POST /mcp`. It exposes the evidence-first RewardRadar
+fixture via `search_rewards`, `verify_funding`, and
+`summarize_submission_status`; see `docs/ALEXA_PLUS.md`. The prototype is
+explicitly fixture-only and does not claim a live Alexa+ integration or a prize.
+A short English walkthrough is committed at
+[`public/media/AlexaPlus-demo-draft.mp4`](public/media/AlexaPlus-demo-draft.mp4).
 
 ### Dashboard
 
@@ -79,7 +90,7 @@ Open `http://localhost:5173`. Row selection and filters are interactive. The rep
 
 ### Static public deployment
 
-The repository also contains a least-privilege GitHub Pages workflow. It sets `REWARDRADAR_STATIC_EXPORT=1`, runs the official Next.js static export, and deploys only `out/`. The normal `pnpm build` command remains the Vinext/Sites build, so this public deployment does not change that runtime. GitHub Actions successfully deployed the current snapshot at `https://cuentapraces07-ops.github.io/rewardradar/`.
+The repository also contains a least-privilege GitHub Pages workflow. It sets `REWARDRADAR_STATIC_EXPORT=1`, runs the official Next.js static export, and deploys only `out/`. The normal `pnpm build` command remains the Vinext/Sites build, so this fallback does not change that runtime. Once Pages is enabled with **GitHub Actions** as its source, the expected public URL is `https://cuentapraces07-ops.github.io/rewardradar/`.
 
 ## Repository map
 
@@ -97,6 +108,7 @@ data/              transparent demonstration inputs
 docs/              architecture and submission assets
 submission/        video narration and three builder.aws bonus-post drafts
 tests/             scoring guardrail tests
+public/media/      public English Alexa+ walkthrough draft
 SUBMISSION_CHECKLIST.md  rule-by-rule readiness register
 DISCLOSURES.md           AI assistance and dependency disclosure
 ```
@@ -118,8 +130,8 @@ The optional phone-verification adapter uses `calle-ai==0.7.0`, the latest PyPI 
 - The four specialist nodes and tool handoffs execute through the Strands Agents SDK; `python -m agent.demo` prints the tool ledger.
 - The repository is MIT-licensed and includes source, tests, an architecture diagram, submission copy, narration, and a reproducible video generator.
 - Three distinct, source-backed builder.aws drafts are included for the optional bonus. They are drafts, not claimed as published posts.
-- GitHub Pages is the public snapshot deployment. The OpenAI Sites instance is an owner-private development preview; live-source capture and the Python agent runtime remain separate CLI processes.
-- The AWS account and AWS Builder ID exist, but Bedrock access remains incomplete. **AWS runtime evidence captured so far: none.** AgentCore is optional. No completed Bedrock run or AgentCore deployment is claimed.
+- The OpenAI Sites deployment is an owner-private hosted snapshot. A GitHub Pages static-export workflow provides the public fallback; live-source capture and the Python agent runtime remain separate CLI processes.
+- **AWS runtime evidence captured so far: none.** The repository includes an explicit Amazon Bedrock entry point, but neither a completed Bedrock invocation nor an AgentCore deployment is claimed until its output is recorded.
 - `DemoModel` is a deterministic, credential-free adapter for reproduction. It does not pretend to be a hosted foundation model.
 - AI-assisted development and all pre-existing/reused components must be disclosed in the final Devpost entry.
 
@@ -133,12 +145,12 @@ RewardRadar does not guarantee a prize or payout. It does not fabricate identiti
 - [x] Strands tools and specialist graph implemented
 - [x] Deterministic scoring guardrails tested
 - [x] Interactive dashboard implemented
-- [x] Architecture, narration, and 3:17.74 public Vimeo demo video prepared (`https://vimeo.com/1226296425`)
+- [x] Architecture, narration, and sub-five-minute demo video prepared
 - [x] Time-stamped raw evidence snapshot committed
 - [x] Three optional builder.aws bonus-post drafts prepared
-- [x] GitHub Pages snapshot deployed publicly (`https://cuentapraces07-ops.github.io/rewardradar/`)
-- [x] Public GitHub repository (`https://github.com/cuentapraces07-ops/rewardradar`)
-- [ ] Devpost submission (pending entrant details and rule attestations)
+- [x] GitHub Pages static-export fallback implemented and locally tested
+- [x] Public GitHub repository ([cuentapraces07-ops/rewardradar](https://github.com/cuentapraces07-ops/rewardradar))
+- [ ] Devpost submission (requires owner identity and final submit authorization)
 - [ ] Payout destination (required only if an award is issued)
 
 ## License
