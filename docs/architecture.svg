@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">RewardRadar multi-agent architecture</title>
+  <desc id="desc">The hosted dashboard presents a saved evidence snapshot. Separate public-source capture tools and a four-node Strands GraphBuilder demo process checked-in evidence through a deterministic decision ledger. An explicit Bedrock runner is included, but no AWS runtime evidence is claimed yet.</desc>
+  <defs>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#ff5d24" stroke-width="2"/></marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#8c9994" stroke-width="2"/></marker>
+  </defs>
+  <rect width="1400" height="900" fill="#f3f0e9"/>
+  <text x="72" y="66" font-family="Arial, sans-serif" font-size="42" font-weight="800" fill="#172a25">REWARDRADAR</text>
+  <text x="72" y="100" font-family="Arial, sans-serif" font-size="17" font-weight="600" fill="#65736d" letter-spacing="2">EVIDENCE-FIRST MULTI-AGENT SYSTEM</text>
+
+  <g font-family="Arial, sans-serif">
+    <rect x="72" y="134" width="300" height="118" fill="#fffdf8" stroke="#172a25" stroke-width="2"/>
+    <text x="96" y="168" font-size="13" font-weight="700" fill="#ff5d24" letter-spacing="2">USER + INTERFACE</text>
+    <text x="96" y="204" font-size="23" font-weight="800" fill="#172a25">Web dashboard</text>
+    <text x="96" y="231" font-size="15" fill="#65736d">Snapshot dashboard · cash floor · filters</text>
+
+    <rect x="430" y="134" width="340" height="118" fill="#fffdf8" stroke="#bdb8ad" stroke-width="2"/>
+    <text x="454" y="168" font-size="13" font-weight="700" fill="#65736d" letter-spacing="2">STRANDS TOOLS</text>
+    <text x="454" y="204" font-size="18" font-weight="800" fill="#172a25">Opire · GitHub · Execution · Superteam</text>
+    <text x="454" y="231" font-size="15" fill="#65736d">Fetch inventory · verify canonical state</text>
+
+    <rect x="828" y="134" width="500" height="118" fill="#17322c"/>
+    <text x="852" y="168" font-size="13" font-weight="700" fill="#ff8758" letter-spacing="2">MODEL + ORCHESTRATION</text>
+    <text x="852" y="204" font-size="20" font-weight="800" fill="#ffffff">Strands GraphBuilder · injectable model</text>
+    <text x="852" y="231" font-size="15" fill="#c1d3cd">Credential-free DemoModel · explicit Bedrock runner</text>
+  </g>
+  <path d="M222 252V294" stroke="#ff5d24" stroke-width="3" marker-end="url(#arrow-orange)"/>
+  <path d="M600 252V294" stroke="#8c9994" stroke-width="3" marker-end="url(#arrow-gray)"/>
+  <path d="M1078 252V294" stroke="#8c9994" stroke-width="3" marker-end="url(#arrow-gray)"/>
+
+  <text x="72" y="320" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#65736d" letter-spacing="2">CORE AGENT LOOP</text>
+  <g font-family="Arial, sans-serif">
+    <rect x="72" y="340" width="270" height="118" fill="#17322c"/>
+    <text x="96" y="374" font-size="13" font-weight="700" fill="#ff8758" letter-spacing="2">01 · AGENT</text>
+    <text x="96" y="411" font-size="25" font-weight="800" fill="#ffffff">SCOUT</text>
+    <text x="96" y="438" font-size="14" fill="#c1d3cd">Collect + normalize</text>
+
+    <rect x="400" y="340" width="270" height="118" fill="#17322c"/>
+    <text x="424" y="374" font-size="13" font-weight="700" fill="#ff8758" letter-spacing="2">02 · AGENT</text>
+    <text x="424" y="411" font-size="25" font-weight="800" fill="#ffffff">VERIFIER</text>
+    <text x="424" y="438" font-size="14" fill="#c1d3cd">Check canonical state</text>
+
+    <rect x="728" y="340" width="270" height="118" fill="#17322c"/>
+    <text x="752" y="374" font-size="13" font-weight="700" fill="#ff8758" letter-spacing="2">03 · AGENT</text>
+    <text x="752" y="411" font-size="25" font-weight="800" fill="#ffffff">RISK ANALYST</text>
+    <text x="752" y="438" font-size="14" fill="#c1d3cd">Flag friction + risk</text>
+
+    <rect x="1056" y="340" width="272" height="118" fill="#17322c"/>
+    <text x="1080" y="374" font-size="13" font-weight="700" fill="#ff8758" letter-spacing="2">04 · AGENT</text>
+    <text x="1080" y="411" font-size="25" font-weight="800" fill="#ffffff">ROI RANKER</text>
+    <text x="1080" y="438" font-size="14" fill="#c1d3cd">Recommend one action</text>
+  </g>
+  <path d="M342 399H396" stroke="#8c9994" stroke-width="3" marker-end="url(#arrow-gray)"/>
+  <path d="M670 399H724" stroke="#8c9994" stroke-width="3" marker-end="url(#arrow-gray)"/>
+  <path d="M998 399H1052" stroke="#8c9994" stroke-width="3" marker-end="url(#arrow-gray)"/>
+
+  <path d="M1192 458V510H982" fill="none" stroke="#ff5d24" stroke-width="3" marker-end="url(#arrow-orange)"/>
+  <rect x="72" y="514" width="310" height="228" fill="#e7e2d8"/>
+  <text x="98" y="550" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#65736d">NON-NEGOTIABLE GUARDRAILS</text>
+  <g font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172a25">
+    <text x="98" y="590">• source URLs remain visible</text>
+    <text x="98" y="624">• closed means zero</text>
+    <text x="98" y="658">• crowding reduces odds</text>
+    <text x="98" y="692">• payout ≠ money earned</text>
+    <text x="98" y="726">• inputs remain reviewable</text>
+  </g>
+
+  <rect x="430" y="514" width="540" height="138" fill="#fffdf8" stroke="#172a25" stroke-width="3"/>
+  <text x="462" y="552" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#65736d">DETERMINISTIC DECISION LEDGER</text>
+  <text x="462" y="594" font-family="Consolas, monospace" font-size="23" font-weight="700" fill="#172a25">P(payment) × payout ÷ effort</text>
+  <text x="462" y="626" font-family="Arial, sans-serif" font-size="15" fill="#65736d">State · escrow · scope · claimers · rail · deadline</text>
+
+  <rect x="1018" y="514" width="310" height="228" fill="#17322c"/>
+  <text x="1044" y="550" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#91aaa2">DEPLOYMENT DISCLOSURE</text>
+  <text x="1044" y="590" font-family="Arial, sans-serif" font-size="17" font-weight="800" fill="#ffffff">Snapshot UI: OpenAI Sites</text>
+  <text x="1044" y="624" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">Agent runtime: Python + Strands</text>
+  <text x="1044" y="658" font-family="Arial, sans-serif" font-size="16" fill="#ff8758">AWS runtime evidence: pending</text>
+  <text x="1044" y="692" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">AgentCore: optional / not used</text>
+  <text x="1044" y="726" font-family="Arial, sans-serif" font-size="16" fill="#c1d3cd">Bedrock: agent.bedrock_demo</text>
+
+  <path d="M700 652V700" stroke="#ff5d24" stroke-width="3" marker-end="url(#arrow-orange)"/>
+  <rect x="430" y="706" width="540" height="112" fill="#ff5d24"/>
+  <text x="462" y="746" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#58200d">TRACEABLE OUTPUT</text>
+  <text x="462" y="786" font-family="Arial, sans-serif" font-size="27" font-weight="800" fill="#ffffff">PURSUE · WATCH · AVOID</text>
+  <text x="462" y="809" font-family="Arial, sans-serif" font-size="14" fill="#fff3ed">Saved ranking · source links · assumptions · next action</text>
+  <text x="72" y="860" font-family="Arial, sans-serif" font-size="14" fill="#65736d">Honest boundary: advertised payout is never reported as earned money.</text>
+</svg>
