@@ -23,12 +23,12 @@ Deadline: **September 14, 2026 at 5:00 p.m. Pacific Time.**
 
 ## Video
 
-- [x] 3:17.67 H.264/AAC video rendered
+- [x] 3:17.74 H.264/AAC video rendered
 - [x] Explains the problem, audience, and why it matters
 - [x] Shows the product, the Strands graph, a real command, tool handoffs, and output
 - [x] Under the five-minute maximum
-- [ ] Upload to YouTube or Vimeo
-- [ ] Set video visibility to public
+- [x] Upload to Vimeo (`https://vimeo.com/1226296425`)
+- [x] Set video visibility to public
 - [ ] Paste the public URL into Devpost
 
 ## Optional builder.aws bonus
@@ -42,12 +42,12 @@ Deadline: **September 14, 2026 at 5:00 p.m. Pacific Time.**
 
 - [ ] Create or select the eligible human entrant
 - [ ] Confirm the entrant is an adult and is not in an excluded jurisdiction
-- [x] Create AWS Builder ID
-- [ ] Complete AWS account setup and capture one Bedrock run
+- [x] Create an AWS account and a separate AWS Builder ID
+- [x] Keep the runtime disclosure accurate: the AWS account exists, but Bedrock access remains incomplete. AgentCore is optional. No completed Bedrock run or AgentCore deployment is claimed.
 - [ ] Join the hackathon with a Devpost account
-- [ ] Publish this exact source state to a public GitHub, GitLab, or Bitbucket repository
-- [ ] Make the license visible in the repository About area
-- [ ] Make the live demo public, or provide judge-accessible testing credentials
+- [x] Publish baseline commit `127e442aa9ddc1878144c83a6985c1200295066c` to the public repository (`https://github.com/cuentapraces07-ops/rewardradar`)
+- [x] Make the MIT license detectable on the public repository page
+- [x] Make the snapshot demo public (`https://cuentapraces07-ops.github.io/rewardradar/`)
 - [ ] Paste repository, video, demo, and Builder ID into the entry
 - [ ] Review the AI-assistance disclosure
 - [ ] Accept the official rules and submit before the deadline
