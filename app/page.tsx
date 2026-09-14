@@ -3,6 +3,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Bot,
   Check,
   ChevronRight,
   CircleDollarSign,
@@ -13,6 +14,7 @@ import {
   GitBranch,
   Radar,
   RefreshCw,
+  Server,
   ShieldCheck,
   Sparkles,
   Target,
@@ -147,6 +149,27 @@ const agents = [
   { name: "ROI", icon: TrendingUp, text: "Ranks expected value", status: "1 pursue" },
 ];
 
+const alexaTurns = [
+  {
+    prompt: "Which opportunity is worth my next two hours?",
+    tool: "search_rewards",
+    response: "The strongest match has the best payment-adjusted hourly return. I checked source state, competition, and payment signals before recommending it.",
+    evidence: "fixture replay · ranking by expected hourly value",
+  },
+  {
+    prompt: "Is that money actually funded?",
+    tool: "verify_funding",
+    response: "I will not treat it as income. The evidence separates escrow, verified sponsor, and payout rail; if a signal is missing, I say so.",
+    evidence: "escrow + sponsor + payout rail · no guarantees",
+  },
+  {
+    prompt: "Has my Alexa+ project been submitted?",
+    tool: "summarize_submission_status",
+    response: "Honest status: local prototype; registration and external submission require owner confirmation; no payout has been awarded.",
+    evidence: "owner confirmation required · payout not awarded",
+  },
+];
+
 const verdictStyles: Record<Verdict, string> = {
   pursue: "bg-[#d8f6df] text-[#12622f] border-[#a8dfb5]",
   watch: "bg-[#fff1cd] text-[#7a4a00] border-[#efd28a]",
@@ -170,6 +193,7 @@ export default function Home() {
   const [filter, setFilter] = useState<"all" | Verdict>("all");
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [alexaTurn, setAlexaTurn] = useState(0);
 
   const selected = opportunities.find((item) => item.id === selectedId) ?? opportunities[0];
   const visible = useMemo(
@@ -262,7 +286,7 @@ export default function Home() {
                 <span className="font-mono text-3xl font-bold">$5,000</span>
               </div>
               <div className="mt-3 border-l-4 border-[#ff5d24] bg-[#f2efe8] px-3 py-2 text-[11px] font-semibold text-[#59655f]">
-                5 PUBLICATION GATES REMAIN: REPO · VIDEO · DEMO · AWS · DEVPOST
+                3 PUBLICATION GATES REMAIN: HOSTED DEMO · AWS · DEVPOST
               </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
@@ -307,6 +331,22 @@ export default function Home() {
                 {index < agents.length - 1 && <div className="hidden items-center px-1 text-[#9b9e96] lg:flex"><ArrowRight size={18} /></div>}
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="mb-6 grid gap-5 border border-[#cfcac0] bg-[#fffdf8] p-5 shadow-[4px_4px_0_#ded8cc] md:p-6 xl:grid-cols-[.92fr_1.08fr]">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.15em] text-[#ff5d24]"><Bot size={16} />Alexa+ simulated experience</div>
+            <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.035em]">Ask once. Hear the evidence.</h2>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-[#65716b]">This local replay shows how an Alexa+-style client calls RewardRadar’s self-hosted MCP endpoint. The response never turns an advertised amount into a promised payout.</p>
+            <div className="mt-5 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[.12em] text-[#69736e]"><span className="flex items-center gap-1 border border-[#d5d0c7] bg-[#f2efe8] px-2 py-1"><Server size={13} /> POST /mcp</span><span className="border border-[#d5d0c7] bg-[#f2efe8] px-2 py-1">MCP 2025-11-25</span><span className="border border-[#a8dfb5] bg-[#edf8ef] px-2 py-1 text-[#12622f]">Fixture only</span></div>
+            <button type="button" onClick={() => setAlexaTurn((current) => (current + 1) % alexaTurns.length)} className="mt-6 flex items-center gap-2 border border-[#18211f] bg-[#18211f] px-4 py-2.5 text-xs font-bold text-white shadow-[3px_3px_0_#ff5d24] transition hover:-translate-y-0.5"><Sparkles size={14} />Replay next voice turn</button>
+          </div>
+          <div className="border border-[#d5d0c7] bg-[#132c27] p-4 text-white md:p-5">
+            <div className="flex items-center justify-between border-b border-[#355149] pb-3"><span className="text-[10px] font-bold uppercase tracking-[.14em] text-[#9db0aa]">Turn 0{alexaTurn + 1} / 03</span><span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] text-[#66d184]"><span className="h-2 w-2 rounded-full bg-[#66d184]" />MCP response</span></div>
+            <div className="mt-4 flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#ff5d24] text-white"><Bot size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#ff9a73]">Alexa+</p><p className="mt-1 text-sm font-semibold leading-6 text-[#f8f6f1]">“{alexaTurns[alexaTurn].prompt}”</p></div></div>
+            <div className="my-4 ml-11 border-l-2 border-[#ff5d24] pl-3"><p className="font-mono text-[10px] font-bold uppercase tracking-[.1em] text-[#ff9a73]">tool · {alexaTurns[alexaTurn].tool}</p></div>
+            <div className="flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#1d4038] text-[#cde8df]"><ShieldCheck size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#9db0aa]">RewardRadar</p><p className="mt-1 text-sm leading-6 text-[#c8d8d3]">{alexaTurns[alexaTurn].response}</p><p className="mt-3 font-mono text-[10px] text-[#8fa39d]">{alexaTurns[alexaTurn].evidence}</p></div></div>
           </div>
         </section>
 
