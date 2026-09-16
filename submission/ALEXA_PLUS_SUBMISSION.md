@@ -1,62 +1,71 @@
-# RewardRadar — Alexa+ submission draft
+# RewardRadar — Alexa+ track
 
-## Project name
+## Project
 
-RewardRadar: the evidence-first voice for paid technical work
+**RewardRadar: Alexa+ Opportunity Scout** is a voice-first prototype for
+screening paid technical-work listings before someone invests time. It keeps
+advertised rewards, evidence gaps, estimated return, and received cash as
+separate facts.
 
-## One-line description
+## What is implemented
 
-Ask Alexa+ which reward is worth your next hour; RewardRadar checks source
-truth, funding signals, and competition before answering.
+The repository contains a self-hosted MCP endpoint using Streamable HTTP and
+protocol `2025-11-25`, plus a dark, responsive voice-client simulation that
+calls that endpoint over JSON-RPC. The transport negotiates a random
+per-client session, requires the negotiated protocol header on later requests,
+and rejects browser origins outside an exact local allowlist. It returns JSON
+and deliberately does not offer SSE streams. The UI renders structured
+responses and the call trace. It exposes three read-only tools:
 
-## Track and mini challenge
+1. `search_rewards` ranks a checked-in, timestamped fixture by expected hourly
+   value using explicit planning assumptions.
+2. `verify_funding` separates escrow, sponsor, acceptance, and payout-rail
+   signals; missing evidence is not silently treated as verified.
+3. `summarize_submission_status` reports the Alexa+ entry as submitted, with no
+   award announced and no payment received as of September 14, 2026.
 
-- Primary track: **Alexa+**
-- Mini challenge: **AWS Builder**, only if the final build contains recorded
-  AWS runtime evidence and the Devpost form confirms the selection.
-- Mini challenge: **Open Source**, only if the final public repository records a
-  contribution or new open-source project made during the challenge window.
+This is a working prototype of the intended voice interaction. It does not
+connect to an Alexa device, present itself as a production Alexa skill, or
+claim a live marketplace feed. The checked-in opportunity data is a snapshot
+from September 10, 2026; estimated probabilities are not calibrated forecasts.
 
-## What we built
+## Why the voice interaction matters
 
-RewardRadar exposes a self-hosted MCP endpoint at `/mcp` using MCP protocol
-`2025-11-25`. An Alexa+-style request can call three tools:
+A short spoken question can ask the product to compress a multi-step check:
+find a candidate, inspect funding evidence, and give a concise answer with the
+uncertainty left intact. A user can then open the canonical source and decide
+whether to proceed. The design goal is to make “not verified” and “not paid”
+easy to hear—not to make a large prize headline sound certain.
 
-1. `search_rewards` ranks opportunities by payment-adjusted hourly value.
-2. `verify_funding` separates escrow and sponsor evidence from an advertised
-   headline amount.
-3. `summarize_submission_status` reports what is registered, submitted, or
-   actually paid without inventing progress.
+## Run locally
 
-The endpoint is backed by the same four-specialist Strands graph as the web
-dashboard: Scout, Verifier, Risk Analyst, and ROI Ranker. Deterministic Python
-guardrails own the arithmetic; model output cannot silently turn an unverified
-reward into income.
-
-## Why voice helps
-
-Paid technical work is often evaluated while a builder is away from a laptop.
-Alexa+ provides a natural request such as “Which opportunity is worth two hours
-this weekend?” RewardRadar responds with the payout, evidence gaps, crowding,
-and expected hourly value, then links the source for inspection. It is useful
-because it makes uncertainty audible instead of hiding it behind a large
-number.
-
-## Safety and transparency
-
-The demo runs on a checked-in fixture and clearly says so. It never binds a
-wallet, sends a call, creates an account, or claims a prize. A production
-deployment would use HTTPS, reviewed live adapters, authentication, and an
-owner-controlled allowlist before connecting to Alexa+.
-
-## Reproduction
+Start the MCP fixture server:
 
 ```bash
 python -m agent.alexa_mcp_server --port 8787
+```
+
+In another terminal, run the web experience:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173` and run one of the three requests. The interface
+calls the local read-only fixture endpoint at `http://127.0.0.1:8787/mcp`.
+When viewing the hosted static page, the browser cannot reach a server on a
+different computer; reproduce the demo locally instead.
+
+Run the unit tests:
+
+```bash
 python -m unittest tests/test_alexa_mcp_server.py -v
 ```
 
-The public repository contains the source and the English walkthrough draft.
-The local run remains a prototype: it is not a claim of Amazon endorsement,
-prize eligibility, or prize receipt, and final Devpost submission still needs
-the owner-controlled submission step plus any required hosted/device evidence.
+## Honest status
+
+The public Devpost entry is [RewardRadar: Alexa+ Opportunity Scout](https://devpost.com/software/rewardradar-alexa-opportunity-scout).
+Submission is complete; award and payment are not. The video and public source
+are linked from the project. No prize, Amazon endorsement, device integration,
+or money earned is claimed.

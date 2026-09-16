@@ -1,0 +1,163 @@
+1
+00:00:00,000 --> 00:00:02,457
+A reward headline is only the start
+
+2
+00:00:02,457 --> 00:00:03,510
+of the story.
+
+3
+00:00:03,510 --> 00:00:05,265
+Is the work still open?
+
+4
+00:00:05,265 --> 00:00:06,669
+Is the sponsor verifiable?
+
+5
+00:00:06,669 --> 00:00:08,775
+Can the payout actually reach you?
+
+6
+00:00:08,775 --> 00:00:11,232
+RewardRadar is built to help answer one
+
+7
+00:00:11,232 --> 00:00:13,689
+practical question before you commit your next
+
+8
+00:00:13,689 --> 00:00:14,040
+hour.
+
+9
+00:00:14,260 --> 00:00:17,338
+Here, the user asks whether any available
+
+10
+00:00:17,338 --> 00:00:19,097
+work is worth pursuing.
+
+11
+00:00:19,097 --> 00:00:22,176
+This is a voice-client simulation: the visual
+
+12
+00:00:22,176 --> 00:00:25,254
+interface turns that request into a real
+
+13
+00:00:25,254 --> 00:00:28,332
+tool call to RewardRadar's local Model Context
+
+14
+00:00:28,332 --> 00:00:29,212
+Protocol server.
+
+15
+00:00:29,432 --> 00:00:32,669
+The client negotiates MCP twenty twenty-five dash
+
+16
+00:00:32,669 --> 00:00:35,907
+eleven dash twenty-five, discovers the available tools,
+
+17
+00:00:35,907 --> 00:00:37,757
+and requests a search.
+
+18
+00:00:37,757 --> 00:00:40,994
+The server ranks its timestamped demonstration records
+
+19
+00:00:40,994 --> 00:00:44,232
+and returns structured results with the source,
+
+20
+00:00:44,232 --> 00:00:46,544
+assumptions, and a planning verdict.
+
+21
+00:00:46,764 --> 00:00:50,015
+Now we inspect funding instead of trusting
+
+22
+00:00:50,015 --> 00:00:50,944
+the headline.
+
+23
+00:00:50,944 --> 00:00:54,196
+Escrow, sponsor verification, acceptance criteria, and payout
+
+24
+00:00:54,196 --> 00:00:56,053
+setup are separate signals.
+
+25
+00:00:56,053 --> 00:00:57,911
+Missing evidence remains visible.
+
+26
+00:00:57,911 --> 00:01:01,163
+A listed reward is never described as
+
+27
+00:01:01,163 --> 00:01:02,556
+money already earned.
+
+28
+00:01:02,776 --> 00:01:05,338
+RewardRadar checks the submission record, too.
+
+29
+00:01:05,338 --> 00:01:07,901
+The Alexa-plus Devpost entry is submitted.
+
+30
+00:01:07,901 --> 00:01:10,890
+No award has been announced, and no
+
+31
+00:01:10,890 --> 00:01:12,598
+payment has been received.
+
+32
+00:01:12,598 --> 00:01:15,588
+Those are three different states, and the
+
+33
+00:01:15,588 --> 00:01:17,296
+interface keeps them distinct.
+
+34
+00:01:17,516 --> 00:01:20,284
+This prototype runs locally on a checked-in
+
+35
+00:01:20,284 --> 00:01:20,680
+fixture.
+
+36
+00:01:20,680 --> 00:01:23,448
+It is not connected to an Alexa
+
+37
+00:01:23,448 --> 00:01:26,216
+device or a live rewards feed, and
+
+38
+00:01:26,216 --> 00:01:28,589
+its planning estimates are not guarantees.
+
+39
+00:01:28,589 --> 00:01:31,357
+RewardRadar makes the evidence easier to hear—and
+
+40
+00:01:31,357 --> 00:01:34,125
+easier to inspect—before you decide what to
+
+41
+00:01:34,125 --> 00:01:34,916
+do next.

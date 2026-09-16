@@ -1,8 +1,8 @@
 # RewardRadar
 
-**Stop chasing phantom bounties.** RewardRadar is a Strands multi-agent system that audits paid technical opportunities before a contributor commits scarce time. It cross-checks marketplace claims against canonical sources, identifies payment and competition risk, and ranks only the opportunities that survive by expected return.
+**Check the evidence before you spend the hour.** RewardRadar is an evidence-first opportunity scout. Its broader audit pipeline uses specialist agents to compare reward claims against canonical sources; the Alexa+ prototype exposes a concise, inspectable voice flow over MCP.
 
-Built for the **Professional Agents** track of the 2026 Agents for Humans hackathon.
+The Alexa+ entry is publicly [submitted to the 2026 Amazon Developer Hackathon](https://devpost.com/software/rewardradar-alexa-opportunity-scout). No award has been announced and no prize money has been received.
 
 ## Why this exists
 
@@ -70,14 +70,22 @@ The preview masks the destination, discloses the AI caller, fixes the allowed qu
 
 ### Alexa+ MCP prototype
 
-The repository includes a credential-free self-hosted MCP endpoint for the
-Alexa+ track. Run `python -m agent.alexa_mcp_server --port 8787` and send
-JSON-RPC requests to `POST /mcp`. It exposes the evidence-first RewardRadar
-fixture via `search_rewards`, `verify_funding`, and
-`summarize_submission_status`; see `docs/ALEXA_PLUS.md`. The prototype is
-explicitly fixture-only and does not claim a live Alexa+ integration or a prize.
-A short English walkthrough is committed at
-[`public/media/AlexaPlus-demo-draft.mp4`](public/media/AlexaPlus-demo-draft.mp4).
+The repository includes a credential-free local MCP endpoint and a responsive
+voice-client simulation. Start the endpoint with
+`python -m agent.alexa_mcp_server --port 8787`, start the site with `pnpm dev`,
+then open `http://localhost:5173`. The UI actually calls JSON-RPC
+`initialize`, `tools/list`, and `tools/call` for `search_rewards`,
+`verify_funding`, or `summarize_submission_status`. See
+[`docs/ALEXA_PLUS.md`](docs/ALEXA_PLUS.md). It uses the timestamped local
+fixture rather than a live marketplace feed and is not connected to an Alexa
+device. The HTTP transport uses per-client MCP sessions, negotiates
+`2025-11-25`, returns JSON, and rejects browser origins outside its explicit
+localhost allowlist. It does not offer server-sent events. The 95-second
+English walkthrough shows the UI making the real local MCP calls, then ends on
+the complete three-step workflow and funding disclaimer:
+[`public/media/AlexaPlus-demo-v0.4.mp4`](public/media/AlexaPlus-demo-v0.4.mp4).
+Standalone captions are at
+[`submission/VIDEO_NARRATION_EN_v0.4.srt`](submission/VIDEO_NARRATION_EN_v0.4.srt).
 
 ### Dashboard
 
@@ -86,7 +94,9 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:5173`. Row selection and filters are interactive. The replay control animates a saved UI trace; it does not refresh sources or invoke the Python agent. Run the capture scripts for fresh network evidence.
+Open `http://localhost:5173`. The landing page is the Alexa+ voice-client
+prototype; it displays the MCP trace and structured fixture response. The
+standalone CLI agent and live-source audit commands are documented above.
 
 ### Static public deployment
 
@@ -144,13 +154,14 @@ RewardRadar does not guarantee a prize or payout. It does not fabricate identiti
 - [x] Live market evidence collected
 - [x] Strands tools and specialist graph implemented
 - [x] Deterministic scoring guardrails tested
-- [x] Interactive dashboard implemented
+- [x] Interactive Alexa+ MCP simulation implemented
 - [x] Architecture, narration, and sub-five-minute demo video prepared
 - [x] Time-stamped raw evidence snapshot committed
 - [x] Three optional builder.aws bonus-post drafts prepared
 - [x] GitHub Pages static-export fallback implemented and locally tested
 - [x] Public GitHub repository ([cuentapraces07-ops/rewardradar](https://github.com/cuentapraces07-ops/rewardradar))
-- [ ] Devpost submission (requires owner identity and final submit authorization)
+- [x] Amazon Developer Hackathon Alexa+ Devpost entry submitted ([public project](https://devpost.com/software/rewardradar-alexa-opportunity-scout))
+- [ ] Award or payout (not announced / not received)
 - [ ] Payout destination (required only if an award is issued)
 
 ## License

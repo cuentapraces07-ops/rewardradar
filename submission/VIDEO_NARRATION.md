@@ -1,37 +1,45 @@
-# RewardRadar video narration
+# Alexa+ walkthrough — narration master
 
-## 1 — The problem
+Runtime target: 1:30–1:50. Narration: natural U.S. English, male voice
+(`en-US-AndrewNeural`). Visuals: live captures of the running web client and
+local MCP server; no stock footage, unsupported device claims, or code-only
+slides.
 
-A bounty feed shows advertised money. It does not show whether the work is still available, whether ten people already claimed it, or whether the payment mechanism can actually reach you. RewardRadar answers the professional question: should I spend my next hour here?
+## Scene 1 — The decision (about 12 seconds)
 
-## 2 — Evidence, not inventory
+A reward headline is only the start of the story. Is the work still open? Is
+the sponsor verifiable? Can the payout actually reach you? RewardRadar is built
+to help answer one practical question before you commit your next hour.
 
-In a time-stamped September tenth evidence capture, repository scripts queried three public feeds. Of thirty advertised Opire rows, only eight canonical issues were open. Twenty-two were eliminated before coding. Execution Market exposed twenty-six tasks worth one dollar and seventy-eight cents in total, while a separate Superteam capture found one then-open, agent-eligible listing among twenty-one rows.
+## Scene 2 — Ask naturally (about 13 seconds)
 
-## 3 — Four cooperating agents
+Here, the user asks whether any available work is worth pursuing. This is a
+voice-client simulation: the visual interface turns that request into a real
+tool call to RewardRadar’s local Model Context Protocol server.
 
-RewardRadar implements a real four-node Strands GraphBuilder pipeline. The submitted credential-free run uses DemoModel, a deterministic adapter that makes one prescribed tool call per node. It demonstrates executable orchestration and tool plumbing, not open-ended model reasoning.
+## Scene 3 — Show the protocol (about 14 seconds)
 
-## 4 — Runnable proof
+The client negotiates MCP twenty-twenty-five dash eleven dash twenty-five,
+discovers the available tools, and requests a search. The server ranks its
+timestamped demonstration records and returns structured results with the
+source, assumptions, and a planning verdict.
 
-The credential-free demo runs each Strands node over the same disclosed fixture and prints each node’s tool invocation and result. Judges can reproduce that deterministic run with one command. A separate entry point runs the same graph through Amazon Bedrock once AWS access is configured.
+## Scene 4 — Verify the money (about 15 seconds)
 
-## 5 — A large number can still be a bad bet
+Now we inspect funding instead of trusting the headline. Escrow, sponsor
+verification, acceptance criteria, and payout setup are separate signals.
+Missing evidence remains visible. A listed reward is never described as money
+already earned.
 
-One issue advertised more than three thousand dollars. But the canonical discussion was locked, ten claimers were already competing, and payment was not escrowed. RewardRadar cut the practical probability below one percent and said avoid. The highest payout is not always the best opportunity.
+## Scene 5 — Report the true status (about 14 seconds)
 
-## 6 — Capital-gated work
+RewardRadar checks the submission record, too. The Alexa-plus Devpost entry is
+submitted. No award has been announced, and no payment has been received. Those
+are three different states, and the interface keeps them distinct.
 
-The Superteam verifier found one live agent-eligible competition with ten submissions and individual prizes from one hundred to two hundred fifty USDC. But qualifying requires a public X post and at least five Solana-mainnet trades. The sponsor was not marked verified, payment was sponsor-direct, and the API deadline conflicts with the written close. RewardRadar said avoid: do not risk real capital on a headline.
+## Scene 6 — Close with boundaries (about 13 seconds)
 
-## 7 — The system chose this build
-
-In the disclosed fixture, the Professional Agents track ranked first: a five-thousand-dollar gold prize, with a two-thousand-dollar podium floor. The eight-percent payment probability is an explicit planning assumption, not a measured prediction; deterministic arithmetic produces a four-hundred-dollar expected value before effort.
-
-## 8 — Guardrails, not vibes
-
-In this demo, fixed Python formulas apply transparent risk multipliers and compute expected value from explicit fixture inputs. DemoModel does not perform open-ended reasoning, and no hosted-model run is claimed yet. Source links and payout gaps stay visible, and advertised money is never reported as earned.
-
-## 9 — The outcome
-
-RewardRadar does not find more work. It finds the work worth doing. Four Strands agents, deterministic guardrails, transparent uncertainty, and one qualified pursuit. Stop chasing phantom bounties. Start verifying.
+This prototype runs locally on a checked-in fixture. It is not connected to an
+Alexa device or a live rewards feed, and its planning estimates are not
+guarantees. RewardRadar makes the evidence easier to hear—and easier to
+inspect—before you decide what to do next.

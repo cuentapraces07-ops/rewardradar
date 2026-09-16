@@ -4,8 +4,8 @@ import "./globals.css";
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const metadata: Metadata = {
-  title: "RewardRadar — Stop chasing phantom bounties",
-  description: "A Strands multi-agent system that verifies reward inventory, detects risk and ranks work by payment-adjusted value.",
+  title: "RewardRadar — Alexa+ opportunity scout",
+  description: "A voice-first, evidence-led prototype that screens reward listings through a local MCP server and keeps advertised prizes separate from earned cash.",
   other: {
     "codex-preview": "development",
   },
