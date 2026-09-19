@@ -4,7 +4,7 @@ RewardRadar was created during the 2026 Agents for Humans submission period.
 
 The entrant directed development with substantial assistance from OpenAI Codex for opportunity research, product strategy, source-code generation, testing, documentation, visual design, and demo-video production. The submitted agent logic, dashboard, evidence capture, tests, architecture diagram, and video assets were produced for this project during the submission period.
 
-The project uses standard open-source dependencies rather than copying another entrant's project or incorporating pre-existing proprietary code. Important dependencies include the Strands Agents SDK, React, Vinext/Next-compatible APIs, Tailwind CSS, Lucide icons, Pillow, pyttsx3, and FFmpeg. Their respective upstream licenses continue to apply.
+The project uses standard open-source dependencies rather than copying another entrant's project or incorporating pre-existing proprietary code. Important dependencies include the Strands Agents SDK, React, Vinext/Next-compatible APIs, Tailwind CSS, Lucide icons, Pillow, edge-tts for the generated demo narration, and FFmpeg. Their respective upstream licenses continue to apply.
 
 An optional verification module targets the MIT-licensed CALL-E Python SDK (`calle-ai==0.7.0`). It was added during the submission period from the public SDK contract, not copied from another CALL-E hackathon project. The module defaults to a redacted, network-free preview. No live phone call, CALL-E account, runtime API response, or CALL-E prize eligibility is represented by the committed demo.
 
