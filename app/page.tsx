@@ -168,6 +168,12 @@ const alexaTurns = [
     response: "Honest status: local prototype; registration and external submission require owner confirmation; no payout has been awarded.",
     evidence: "owner confirmation required · payout not awarded",
   },
+  {
+    prompt: "Plan a $100-plus opportunity I can finish in 40 hours.",
+    tool: "plan_pursuit",
+    response: "I can prepare a bounded pursuit brief, but I will not submit work, contact a sponsor, spend money, or claim a payout without the owner's confirmation.",
+    evidence: "minimum_payout_usd: 100 · max_hours: 40 · read-only plan",
+  },
 ];
 
 const verdictStyles: Record<Verdict, string> = {
@@ -343,7 +349,7 @@ export default function Home() {
             <button type="button" onClick={() => setAlexaTurn((current) => (current + 1) % alexaTurns.length)} className="mt-6 flex items-center gap-2 border border-[#18211f] bg-[#18211f] px-4 py-2.5 text-xs font-bold text-white shadow-[3px_3px_0_#ff5d24] transition hover:-translate-y-0.5"><Sparkles size={14} />Replay next voice turn</button>
           </div>
           <div className="border border-[#d5d0c7] bg-[#132c27] p-4 text-white md:p-5">
-            <div className="flex items-center justify-between border-b border-[#355149] pb-3"><span className="text-[10px] font-bold uppercase tracking-[.14em] text-[#9db0aa]">Turn 0{alexaTurn + 1} / 03</span><span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] text-[#66d184]"><span className="h-2 w-2 rounded-full bg-[#66d184]" />MCP response</span></div>
+            <div className="flex items-center justify-between border-b border-[#355149] pb-3"><span className="text-[10px] font-bold uppercase tracking-[.14em] text-[#9db0aa]">Turn 0{alexaTurn + 1} / 04</span><span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] text-[#66d184]"><span className="h-2 w-2 rounded-full bg-[#66d184]" />MCP response</span></div>
             <div className="mt-4 flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#ff5d24] text-white"><Bot size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#ff9a73]">Alexa+</p><p className="mt-1 text-sm font-semibold leading-6 text-[#f8f6f1]">“{alexaTurns[alexaTurn].prompt}”</p></div></div>
             <div className="my-4 ml-11 border-l-2 border-[#ff5d24] pl-3"><p className="font-mono text-[10px] font-bold uppercase tracking-[.1em] text-[#ff9a73]">tool · {alexaTurns[alexaTurn].tool}</p></div>
             <div className="flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#1d4038] text-[#cde8df]"><ShieldCheck size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#9db0aa]">RewardRadar</p><p className="mt-1 text-sm leading-6 text-[#c8d8d3]">{alexaTurns[alexaTurn].response}</p><p className="mt-3 font-mono text-[10px] text-[#8fa39d]">{alexaTurns[alexaTurn].evidence}</p></div></div>
