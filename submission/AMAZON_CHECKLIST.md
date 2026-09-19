@@ -14,8 +14,8 @@ payment as earned.
 | AWS Builder mini challenge | Existing Strands graph and Bedrock entry point; runtime evidence still needed | Pending evidence |
 | Open Source mini challenge | Existing public repo; qualifying challenge-window contribution must be recorded | Pending window/URL |
 | Public GitHub repository with open-source license | `LICENSE`, existing public RewardRadar repository | Existing; new files not uploaded |
-| Demo video under three minutes, public, English | `public/media/AlexaPlus-demo-v0.2.mp4` (101.96 seconds, English, local draft) | Public upload pending |
-| Product feedback for each API/SDK | Draft content can be prepared after registration | Pending |
+| Demo video under three minutes, public, English | `public/media/AlexaPlus-demo-v0.2.mp4` (94.89 seconds, English, male narration, local draft) | Public upload pending |
+| Product feedback for each API/SDK | `submission/AMAZON_PRODUCT_FEEDBACK.md` | Ready locally; owner review pending |
 | Explanation of changes made during window | `submission/ALEXA_PLUS_SUBMISSION.md`; v0.2.0 adds bounded `plan_pursuit` and tests | Pending timestamp/commit |
 | Devpost registration | Amazon form answers prepared; required boxes and Register not clicked | **Owner confirmation required** |
 | Devpost final submission | Not started | **Owner confirmation required** |
