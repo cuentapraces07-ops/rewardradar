@@ -47,18 +47,18 @@ const opportunities: Opportunity[] = [
   {
     id: 1,
     source: "Devpost",
-    title: "Agents for Humans — Professional Agents",
+    title: "Build, Ship, Shape: Amazon Developer Hackathon — Alexa+",
     kind: "Hackathon",
-    payout: 5000,
-    probability: 8,
-    hours: 34,
-    confidence: 84,
+    payout: 25000,
+    probability: 5,
+    hours: 40,
+    confidence: 90,
     competition: "High",
-    deadline: "Sep 14",
+    deadline: "Oct 23",
     verdict: "pursue",
-    reason: "Cash prize, open eligibility and a product already grounded in verified market evidence.",
-    url: "https://agentsforhumans.devpost.com/",
-    signals: ["Cash payout", "$2k floor for podium", "Deadline Sep 14", "Build in progress"],
+    reason: "The official rules list an Alexa+ cash track and the project already has a submitted Devpost entry plus a public v0.2 demo. The Vimeo update is still pending, so this is a plan, not a payout claim.",
+    url: "https://amazonappdev2026.devpost.com/rules",
+    signals: ["$25k Alexa+ track", "Deadline Oct 23", "Public v0.2 demo", "Vimeo update pending"],
   },
   {
     id: 2,
@@ -165,8 +165,8 @@ const alexaTurns = [
   {
     prompt: "Has my Alexa+ project been submitted?",
     tool: "summarize_submission_status",
-    response: "Honest status: local prototype; registration and external submission require owner confirmation; no payout has been awarded.",
-    evidence: "owner confirmation required · payout not awarded",
+    response: "A Devpost entry is submitted and the public v0.2 demo is live. The Vimeo update still needs to be uploaded and linked; no payout has been awarded.",
+    evidence: "Devpost 5/5 · v0.2 public · payout not awarded",
   },
   {
     prompt: "Plan a $100-plus opportunity I can finish in 40 hours.",
@@ -289,15 +289,15 @@ export default function Home() {
             <div className="mt-7 border-y border-[#ded9cf] py-5">
               <div className="flex items-end justify-between">
                 <span className="text-sm font-semibold text-[#59655f]">Best qualified upside</span>
-                <span className="font-mono text-3xl font-bold">$5,000</span>
+                <span className="font-mono text-3xl font-bold">$25,000</span>
               </div>
               <div className="mt-3 border-l-4 border-[#ff5d24] bg-[#f2efe8] px-3 py-2 text-[11px] font-semibold text-[#59655f]">
-                3 PUBLICATION GATES REMAIN: HOSTED DEMO · AWS · DEVPOST
+                2 UPDATE GATES REMAIN: VIMEO · DEVPOST
               </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="bg-[#edf5ef] p-4"><p className="label">Floor prize</p><p className="mt-2 font-mono text-xl font-bold">$2,000</p></div>
-              <div className="bg-[#fff0e8] p-4"><p className="label">Deadline</p><p className="mt-2 font-mono text-xl font-bold">SEP 14</p></div>
+              <div className="bg-[#edf5ef] p-4"><p className="label">Track prize</p><p className="mt-2 font-mono text-xl font-bold">$25,000</p></div>
+              <div className="bg-[#fff0e8] p-4"><p className="label">Deadline</p><p className="mt-2 font-mono text-xl font-bold">OCT 23</p></div>
             </div>
           </aside>
         </section>
