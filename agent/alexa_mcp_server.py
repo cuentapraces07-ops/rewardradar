@@ -34,12 +34,25 @@ DEMO_FIXTURE = Path(__file__).parents[1] / "data" / "demo_candidates.json"
 
 
 PROTOCOL_VERSION = "2025-11-25"
-SERVER_INFO = {"name": "rewardradar-alexa-plus", "version": "0.1.0"}
+SERVER_INFO = {"name": "rewardradar-alexa-plus", "version": "0.2.0"}
 
 
 def _fixture_candidates() -> list[Candidate]:
     payload = json.loads(DEMO_FIXTURE.read_text(encoding="utf-8"))
     return [Candidate(**item) for item in payload]
+
+
+def _matching_candidates(query: str) -> list[Candidate]:
+    """Return fixture rows matching a voice-safe title/source query."""
+
+    candidates = _fixture_candidates()
+    if not query:
+        return candidates
+    return [
+        candidate
+        for candidate in candidates
+        if query in f"{candidate.title} {candidate.source}".lower()
+    ]
 
 
 def _result_text(value: Any) -> dict[str, Any]:
@@ -55,13 +68,7 @@ def _search_rewards(arguments: dict[str, Any]) -> dict[str, Any]:
         limit = min(max(int(arguments.get("limit", 5)), 1), 20)
     except (TypeError, ValueError):
         limit = 5
-    candidates = _fixture_candidates()
-    if query:
-        candidates = [
-            candidate
-            for candidate in candidates
-            if query in f"{candidate.title} {candidate.source}".lower()
-        ]
+    candidates = _matching_candidates(query)
     decisions = rank_candidates(candidates)[:limit]
     return {
         "mode": "fixture",
@@ -102,6 +109,83 @@ def _submission_status(arguments: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _bounded_float(value: Any, default: float, minimum: float, maximum: float) -> float:
+    """Parse an untrusted voice argument without allowing unbounded work."""
+
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        parsed = default
+    if parsed != parsed:  # NaN
+        parsed = default
+    return round(min(max(parsed, minimum), maximum), 2)
+
+
+def _plan_pursuit(arguments: dict[str, Any]) -> dict[str, Any]:
+    """Produce a read-only, voice-ready next-step brief from fixture evidence.
+
+    This tool intentionally plans but never submits, contacts, spends, or
+    configures a payout destination. The explicit owner gate is part of the
+    response so a voice client cannot turn a recommendation into an external
+    action by implication.
+    """
+
+    query = str(arguments.get("query") or "").strip().lower()
+    max_hours = _bounded_float(arguments.get("max_hours", 8), 8, 0.5, 168)
+    minimum_payout = _bounded_float(arguments.get("minimum_payout_usd", 50), 50, 0, 1_000_000)
+    decisions = rank_candidates(_matching_candidates(query))
+    eligible = [
+        decision
+        for decision in decisions
+        if decision.candidate.payout_usd >= minimum_payout
+        and decision.candidate.estimated_hours <= max_hours
+        and decision.verdict in {"pursue", "watch"}
+    ]
+    if not eligible:
+        return {
+            "mode": "fixture",
+            "query": query,
+            "constraints": {"max_hours": max_hours, "minimum_payout_usd": minimum_payout},
+            "recommendation": None,
+            "voice_summary": "No checked-in opportunity meets those limits.",
+            "next_steps": ["Review the canonical source manually", "Do not spend time or money on an unmatched row"],
+            "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
+            "disclosure": "Fixture replay; no live source, submission, or payment action was performed.",
+        }
+
+    decision = eligible[0]
+    candidate = decision.candidate
+    return {
+        "mode": "fixture",
+        "query": query,
+        "constraints": {"max_hours": max_hours, "minimum_payout_usd": minimum_payout},
+        "recommendation": {
+            "title": candidate.title,
+            "source": candidate.source,
+            "url": candidate.url,
+            "advertised_payout_usd": candidate.payout_usd,
+            "estimated_hours": candidate.estimated_hours,
+            "payment_probability": decision.payment_probability,
+            "expected_value_usd": decision.expected_value_usd,
+            "expected_hourly_usd": decision.expected_hourly_usd,
+            "verdict": decision.verdict,
+            "reasons": decision.reasons,
+        },
+        "voice_summary": (
+            f"{candidate.title} is the best fixture match at an advertised "
+            f"${candidate.payout_usd:,.2f}; expected value is "
+            f"${decision.expected_value_usd:,.2f}, not guaranteed income."
+        ),
+        "next_steps": [
+            "Open the canonical source and verify it is still open",
+            "Confirm acceptance criteria and payout rail before starting",
+            "Prepare a local draft and tests before any owner-approved submission",
+        ],
+        "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
+        "disclosure": "Fixture replay; no live source, submission, or payment action was performed.",
+    }
+
+
 TOOL_DEFINITIONS: list[dict[str, Any]] = [
     {
         "name": "search_rewards",
@@ -129,6 +213,18 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "inputSchema": {
             "type": "object",
             "properties": {"track": {"type": "string"}},
+        },
+    },
+    {
+        "name": "plan_pursuit",
+        "description": "Build a read-only, voice-ready next-step brief under payout and time limits; never submits or spends.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Optional title or source filter."},
+                "max_hours": {"type": "number", "minimum": 0.5, "maximum": 168},
+                "minimum_payout_usd": {"type": "number", "minimum": 0},
+            },
         },
     },
 ]
@@ -165,6 +261,7 @@ def handle_rpc(message: dict[str, Any]) -> dict[str, Any] | None:
             "search_rewards": _search_rewards,
             "verify_funding": _verify_funding,
             "summarize_submission_status": _submission_status,
+            "plan_pursuit": _plan_pursuit,
         }
         handler = handlers.get(name)
         if handler is None:

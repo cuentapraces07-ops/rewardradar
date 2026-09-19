@@ -27,6 +27,7 @@ NARRATION = [
     "RewardRadar is an evidence-first voice experience for Alexa Plus. Ask which opportunity is worth your next hour, and the system checks source state, competition, and payout signals before it answers.",
     "The project exposes a self-hosted MCP endpoint over Streamable HTTP using protocol version 2025-11-25. This local run is credential-free and reads a transparent fixture, so every claim can be reproduced.",
     "The voice request calls search rewards. RewardRadar ranks by payment-adjusted hourly value, not by the largest headline. The response keeps the source trail and labels planning assumptions.",
+    "A follow-up calls plan pursuit with a time limit and minimum payout. It ranks only matching fixture evidence, reports the assumptions, and stops at a human confirmation gate. It never submits work, spends money, or claims guaranteed payment.",
     "A second question calls verify funding. Escrow, sponsor verification, and a payout rail are separate signals. Missing evidence lowers confidence; an advertised reward is never reported as money earned.",
     "The same project includes a focus-ready Fire TV web view and fail-closed Ring and Bee adapter boundaries. Fire TV still needs a simulator capture, Ring needs authorized API evidence, and Bee needs real Bee or Apple Watch data.",
     "This is a working Alexa Plus prototype, not a guarantee of a prize. It gives builders a faster, safer answer to one practical question: should I spend my next hour here?",
@@ -99,6 +100,7 @@ def build_frames() -> list[Path]:
         ('{"protocolVersion":"2025-11-25"}', GREEN),
         ('{"method":"tools/list","id":2}', WHITE),
         ('search_rewards · verify_funding · summarize_submission_status', "#b9ccc6"),
+        ('plan_pursuit · read-only · owner confirmation required', "#ff9a73"),
     ]
     y = 515
     for text, color in lines:
@@ -119,7 +121,20 @@ def build_frames() -> list[Path]:
     draw.text((865, 665), "Expected value: $400", fill=GREEN, font=font(25, mono=True, bold=True))
     frames.append(image)
 
-    image, draw = frame(4, "Tool call · verify_funding", "EVIDENCE GAPS STAY AUDIBLE.")
+    image, draw = frame(4, "Tool call · plan_pursuit", "A PLAN, NOT AN AUTOPILOT.", "Time-boxed ranking with an explicit human confirmation gate.")
+    draw.rectangle((70, 475, 760, 735), fill=WHITE, outline="#bbb6ac", width=2)
+    draw.text((105, 500), "REQUEST", fill=MUTED, font=font(15, bold=True))
+    draw.text((105, 548), "plan_pursuit", fill=INK, font=font(31, mono=True, bold=True))
+    draw.text((105, 620), "max_hours: 40", fill=MUTED, font=font(22, mono=True))
+    draw.text((105, 665), "minimum_payout: $100", fill=MUTED, font=font(22, mono=True))
+    draw.rectangle((825, 465, 1530, 735), fill="#fff0d8", outline="#e7bf84", width=2)
+    draw.text((865, 500), "SAFE RESPONSE", fill=ORANGE, font=font(15, bold=True))
+    draw.text((865, 548), "1 qualified match", fill=INK, font=font(30, mono=True, bold=True))
+    draw.text((865, 615), "next: inspect source", fill=INK, font=font(23, mono=True))
+    draw.text((865, 665), "owner confirmation required", fill=ORANGE, font=font(20, mono=True, bold=True))
+    frames.append(image)
+
+    image, draw = frame(5, "Tool call · verify_funding", "EVIDENCE GAPS STAY AUDIBLE.")
     draw.rectangle((70, 475, 1000, 735), fill=INK)
     checks = [("escrow", "not verified", RED), ("sponsor", "not verified", RED), ("payout rail", "owner setup", ORANGE)]
     y = 515
@@ -133,7 +148,7 @@ def build_frames() -> list[Path]:
     draw.text((1095, 690), "headline ≠ income", fill=INK, font=font(20, mono=True, bold=True))
     frames.append(image)
 
-    image, draw = frame(5, "One codebase · honest boundaries", "MORE DEVICES, NO FABRICATED EVIDENCE.")
+    image, draw = frame(6, "One codebase · honest boundaries", "MORE DEVICES, NO FABRICATED EVIDENCE.")
     labels = [("ALEXA+", "MCP ready locally", GREEN), ("FIRE TV", "web view · capture pending", ORANGE), ("RING", "API token · device pending", ORANGE), ("BEE", "real export required", RED)]
     y = 475
     for label, value, color in labels:
@@ -143,10 +158,10 @@ def build_frames() -> list[Path]:
         y += 64
     frames.append(image)
 
-    image, draw = frame(6, "The product decision", "SHOULD I SPEND MY NEXT HOUR HERE?", "RewardRadar answers with traceable evidence, transparent uncertainty, and no promise of a prize.")
+    image, draw = frame(7, "The product decision", "SHOULD I SPEND MY NEXT HOUR HERE?", "RewardRadar answers with traceable evidence, transparent uncertainty, and no promise of a prize.")
     draw.rectangle((70, 545, 1530, 730), fill=ORANGE)
     draw.text((110, 590), "WORKING ALEXA+ PROTOTYPE", fill=WHITE, font=font(34, bold=True))
-    draw.text((110, 660), "search  ·  verify  ·  disclose", fill="#5a210e", font=font(24, mono=True, bold=True))
+    draw.text((110, 660), "search  ·  plan  ·  verify  ·  disclose", fill="#5a210e", font=font(24, mono=True, bold=True))
     frames.append(image)
 
     paths: list[Path] = []

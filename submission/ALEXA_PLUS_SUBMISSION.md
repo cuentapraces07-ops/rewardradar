@@ -20,18 +20,21 @@ truth, funding signals, and competition before answering.
 ## What we built
 
 RewardRadar exposes a self-hosted MCP endpoint at `/mcp` using MCP protocol
-`2025-11-25`. An Alexa+-style request can call three tools:
+`2025-11-25`. An Alexa+-style request can call four tools:
 
 1. `search_rewards` ranks opportunities by payment-adjusted hourly value.
 2. `verify_funding` separates escrow and sponsor evidence from an advertised
    headline amount.
 3. `summarize_submission_status` reports what is registered, submitted, or
    actually paid without inventing progress.
+4. `plan_pursuit` turns a spoken constraint into a bounded, read-only next-step
+   brief with a voice summary, evidence reasons, and an explicit owner gate.
 
 The endpoint is backed by the same four-specialist Strands graph as the web
 dashboard: Scout, Verifier, Risk Analyst, and ROI Ranker. Deterministic Python
 guardrails own the arithmetic; model output cannot silently turn an unverified
-reward into income.
+reward into income. No tool can submit work, contact a sponsor, spend money, or
+configure a payout destination.
 
 ## Why voice helps
 
@@ -56,7 +59,5 @@ python -m agent.alexa_mcp_server --port 8787
 python -m unittest tests/test_alexa_mcp_server.py -v
 ```
 
-The public repository contains the source and the English walkthrough draft.
-The local run remains a prototype: it is not a claim of Amazon endorsement,
-prize eligibility, or prize receipt, and final Devpost submission still needs
-the owner-controlled submission step plus any required hosted/device evidence.
+The local run is a prototype until the owner confirms the Amazon registration,
+any public upload, and the final Devpost submission.
