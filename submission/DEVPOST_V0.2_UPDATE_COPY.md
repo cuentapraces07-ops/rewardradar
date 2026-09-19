@@ -46,6 +46,5 @@ external action.
 ## Source and demo fields
 
 - Repository: `https://github.com/cuentapraces07-ops/rewardradar`
-- Video: replace the existing draft link with the owner-approved public v0.2
-  upload after it is uploaded.
-- Commit: `f21c48779cd2e2cbb1d5e8bcedadc9791540dcf4`
+- Video: replace the existing draft link with `https://vimeo.com/1228312635`.
+- Public repository commit: `3e336a9a90b79c79ec5142983d42f66eefa2bc50`

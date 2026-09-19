@@ -13,12 +13,12 @@ payment as earned.
 | Bee data boundary | `agent/bee_adapter.py`, `docs/RING_BEE.md` | Real Bee/Apple Watch export required |
 | AWS Builder mini challenge | Existing Strands graph and Bedrock entry point; runtime evidence still needed | Pending evidence |
 | Open Source mini challenge | Existing public repo; qualifying challenge-window contribution must be recorded | Pending window/URL |
-| Public GitHub repository with open-source license | `LICENSE`, existing public RewardRadar repository | Existing; new files not uploaded |
-| Demo video under three minutes, public, English | `public/media/AlexaPlus-demo-v0.2.mp4` (94.89 seconds, English, male narration, local draft) | Public upload pending |
+| Public GitHub repository with open-source license | `LICENSE`, public RewardRadar repository at commit `3e336a9` | Public and reachable; v0.2 files uploaded |
+| Demo video under three minutes, public, English | [Vimeo v0.2](https://vimeo.com/1228312635), 94.89 seconds, English, male narration | Public upload complete; Devpost still points to the older video |
 | Product feedback for each API/SDK | `submission/AMAZON_PRODUCT_FEEDBACK.md` | Ready locally; owner review pending |
 | Explanation of changes made during window | `submission/ALEXA_PLUS_SUBMISSION.md`; v0.2.0 adds bounded `plan_pursuit` and tests | Pending timestamp/commit |
-| Devpost registration | Amazon form answers prepared; required boxes and Register not clicked | **Owner confirmation required** |
-| Devpost final submission | Not started | **Owner confirmation required** |
+| Devpost registration | Existing Amazon entry shows 5/5 steps complete | Submitted; v0.2 update still pending |
+| Devpost final submission | Existing project page is public and submitted | No new final submission; only the video field needs updating |
 
 The public page currently states a deadline of **October 23, 2026 at 12:00
 p.m. PDT** and says that Alexa+ entries must show the MCP server or simulated
