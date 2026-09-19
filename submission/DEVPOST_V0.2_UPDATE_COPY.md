@@ -30,6 +30,8 @@ limits and a no-match result does not invent work.
 - `pnpm lint` passes.
 - Next static build passes for `/` and `/tv`.
 - Vinext client, RSC, and SSR build passes.
+- The local replay exposes four voice turns, including the bounded
+  `plan_pursuit` owner-confirmation step.
 - The English local demo is 101.96 seconds at 1600×900, below three minutes.
 
 ## Transparent limits
@@ -45,4 +47,4 @@ external action.
 - Repository: `https://github.com/cuentapraces07-ops/rewardradar`
 - Video: replace the existing draft link with the owner-approved public v0.2
   upload after it is uploaded.
-- Commit: `4c9ee832fcb0cac443c5cea18185363f41d76092`
+- Commit: `a3f1f5f1f562443d864200ecc7523798d9eed2fb`
