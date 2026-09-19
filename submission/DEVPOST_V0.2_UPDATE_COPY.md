@@ -32,7 +32,8 @@ limits and a no-match result does not invent work.
 - Vinext client, RSC, and SSR build passes.
 - The local replay exposes four voice turns, including the bounded
   `plan_pursuit` owner-confirmation step.
-- The English local demo is 101.96 seconds at 1600×900, below three minutes.
+- The English local demo is 94.89 seconds at 1600×900, below three minutes,
+  with the explicitly selected male `en-US-GuyNeural` narration voice.
 
 ## Transparent limits
 

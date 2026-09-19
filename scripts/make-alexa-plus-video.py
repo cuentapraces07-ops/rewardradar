@@ -7,13 +7,14 @@ locally with original text and shapes.
 
 from __future__ import annotations
 
+import asyncio
 import subprocess
 import sys
 import wave
 from pathlib import Path
 
 import imageio_ffmpeg
-import pyttsx3
+import edge_tts
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -172,17 +173,27 @@ def build_frames() -> list[Path]:
     return paths
 
 
+VOICE = "en-US-GuyNeural"
+
+
 def voice(text: str, destination: Path) -> None:
-    engine = pyttsx3.init()
-    engine.setProperty("rate", 168)
-    engine.setProperty("volume", 0.95)
-    voices = engine.getProperty("voices")
-    english = next((item for item in voices if "english" in item.name.lower() or "zira" in item.name.lower()), None)
-    if english:
-        engine.setProperty("voice", english.id)
-    engine.save_to_file(text, str(destination))
-    engine.runAndWait()
-    engine.stop()
+    """Render the narration with an explicitly male English voice.
+
+    The checked-in video is a generated presentation asset, not a runtime
+    dependency.  Fail loudly if the selected voice cannot be reached instead
+    of silently falling back to a different voice.
+    """
+    compressed = destination.with_suffix(".mp3")
+    asyncio.run(edge_tts.Communicate(text, VOICE).save(str(compressed)))
+    ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    result = subprocess.run(
+        [ffmpeg, "-y", "-i", str(compressed), "-ar", "22050", "-ac", "1", str(destination)],
+        capture_output=True,
+        text=True,
+    )
+    compressed.unlink(missing_ok=True)
+    if result.returncode:
+        raise RuntimeError(result.stderr[-2000:])
 
 
 def duration(path: Path) -> float:

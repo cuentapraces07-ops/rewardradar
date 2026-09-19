@@ -13,8 +13,9 @@ live Alexa device, a live payout, or a prize has been obtained.
   explicit `owner_confirmation_required` gate.
 - The tool cannot submit work, contact a maintainer, spend money, configure a
   payout rail, or report a payment as guaranteed.
-- The Alexa+ demo now shows the plan step and the safety gate in a 101.96-second
-  local MP4, below the three-minute submission limit.
+- The Alexa+ demo now shows the plan step and the safety gate in a 94.89-second
+  local MP4, below the three-minute submission limit, with the explicitly
+  selected male `en-US-GuyNeural` narration voice.
 
 ## Reproduction
 
@@ -39,7 +40,7 @@ python scripts/make-alexa-plus-video.py outputs/AlexaPlus-demo-v0.2-local.mp4
 outputs/AlexaPlus-demo-v0.2-local.mp4
 
 ffprobe ... outputs/AlexaPlus-demo-v0.2-local.mp4
-duration=101.959410
+ duration=94.894467
 codec=h264/aac; resolution=1600x900; fps=29.99
 ```
 

@@ -44,7 +44,8 @@ behavior. The public v0.2 commit includes the video and verification packet.
 ### Polish (10%)
 
 English responsive UI, static export, Fire TV route, readable evidence cards,
-visible limitations, and a 101.96-second 1600×900 walkthrough. Local checks:
+visible limitations, and a 94.89-second 1600×900 walkthrough with male
+narration. Local checks:
 33 tests pass (one optional SDK test skipped), `pnpm lint`, Next static build,
 and Vinext client/RSC/SSR build all pass.
 
