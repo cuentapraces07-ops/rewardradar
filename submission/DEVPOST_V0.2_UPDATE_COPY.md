@@ -12,7 +12,8 @@ constraint into a bounded, auditable next-step plan.
 ## What changed in v0.2
 
 RewardRadar now exposes `plan_pursuit` alongside `search_rewards`,
-`verify_funding`, and `summarize_submission_status`. A voice request such as
+`verify_funding`, `summarize_submission_status`, `summarize_evidence_signals`,
+and the quote-only `simulate_x402_quote` preview. A voice request such as
 “show me an opportunity above $100 that fits in 40 hours” is evaluated against
 the checked-in evidence fixture. The response discloses the source, constraints,
 assumptions, reasons, and next steps, then stops at an explicit owner
@@ -25,7 +26,7 @@ limits and a no-match result does not invent work.
 
 ## Validation
 
-- 33 Python tests pass; one optional CALL-E SDK test is skipped because that
+- 47 Python tests pass; one optional CALL-E SDK test is skipped because that
   integration is not installed.
 - `pnpm lint` passes.
 - Next static build passes for `/` and `/tv`.
@@ -47,4 +48,4 @@ external action.
 
 - Repository: `https://github.com/cuentapraces07-ops/rewardradar`
 - Video: replace the existing draft link with `https://vimeo.com/1228312635`.
-- Public repository commit: `3e336a9a90b79c79ec5142983d42f66eefa2bc50`
+- Public repository commit: `98b5c67ce3f3cb36728db0d65de23cdc3367f0a8` on branch `codex/alexa-plus-v0.2` (verified read-only; owner must confirm hackathon-window timing).

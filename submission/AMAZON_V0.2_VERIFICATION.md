@@ -21,7 +21,7 @@ live Alexa device, a live payout, or a prize has been obtained.
 
 ```text
 python -m unittest discover -s tests -v
-Ran 33 tests in 0.035s
+Ran 38 tests in the current verification pass; one optional SDK test skipped.
 OK (skipped=1)
 
 python -m compileall -q agent tests scripts
@@ -54,3 +54,25 @@ https://vimeo.com/1228312635. The local submission packet is prepared, but
 Devpost registration and final submission remain owner-controlled and are not
 verified here. No account change, maintainer message, or payout action is
 claimed by this packet.
+
+## Fresh local verification — 2026-09-21 13:55 America/Mexico_City
+
+The current checkout was revalidated without changing any external account:
+
+```text
+python -m unittest discover -s tests -p 'test_*.py'
+47 tests, 1 skipped, OK
+
+pnpm run verify:amazon
+9 checks passed, 0 failed; demo 94.89s
+
+pnpm lint
+PASS
+
+pnpm build
+PASS — Vinext client, RSC, client, and SSR environments built
+```
+
+This confirms the local Alexa+ evidence packet remains reproducible. It does
+not prove a live Alexa+ account, a submitted Devpost entry, eligibility, a
+winner decision, or a payout.
