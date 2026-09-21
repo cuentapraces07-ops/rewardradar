@@ -50,6 +50,7 @@ needed for the credential-free Alexa+ prototype path.
 ## Submission boundary
 
 The v0.2 video is now publicly uploaded at
-https://vimeo.com/1228312635. The existing Devpost entry remains submitted,
-but its video field still points at the older upload. No new final submission,
-account change, maintainer message, or payout action is claimed by this packet.
+https://vimeo.com/1228312635. The local submission packet is prepared, but
+Devpost registration and final submission remain owner-controlled and are not
+verified here. No account change, maintainer message, or payout action is
+claimed by this packet.

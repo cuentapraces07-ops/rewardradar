@@ -17,8 +17,8 @@ payment as earned.
 | Demo video under three minutes, public, English | [Vimeo v0.2](https://vimeo.com/1228312635), 94.89 seconds, English, male narration | Public upload complete; Devpost still points to the older video |
 | Product feedback for each API/SDK | `submission/AMAZON_PRODUCT_FEEDBACK.md` | Ready locally; owner review pending |
 | Explanation of changes made during window | `submission/ALEXA_PLUS_SUBMISSION.md`; v0.2.0 adds bounded `plan_pursuit` and tests | Pending timestamp/commit |
-| Devpost registration | Existing Amazon entry shows 5/5 steps complete | Submitted; v0.2 update still pending |
-| Devpost final submission | Existing project page is public and submitted | No new final submission; only the video field needs updating |
+| Devpost registration | No authenticated Devpost state is available in this checkout | Owner must verify registration and eligibility |
+| Devpost final submission | Local packet and public demo are prepared; submission state is not independently verified | Owner must review and submit; no payout is claimed |
 
 The public page currently states a deadline of **October 23, 2026 at 12:00
 p.m. PDT** and says that Alexa+ entries must show the MCP server or simulated

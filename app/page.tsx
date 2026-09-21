@@ -56,9 +56,9 @@ const opportunities: Opportunity[] = [
     competition: "High",
     deadline: "Oct 23",
     verdict: "pursue",
-    reason: "The official rules list an Alexa+ cash track and the project already has a submitted Devpost entry plus a public v0.2 demo. The Vimeo update is still pending, so this is a plan, not a payout claim.",
+    reason: "The official rules list an Alexa+ cash track and the project has a public v0.2 demo plus a local submission packet. Devpost registration and final submission still require owner verification, so this is a plan, not a payout claim.",
     url: "https://amazonappdev2026.devpost.com/rules",
-    signals: ["$25k Alexa+ track", "Deadline Oct 23", "Public v0.2 demo", "Vimeo update pending"],
+    signals: ["$25k Alexa+ track", "Deadline Oct 23", "Public v0.2 demo", "Submission status unverified"],
   },
   {
     id: 2,
@@ -165,8 +165,8 @@ const alexaTurns = [
   {
     prompt: "Has my Alexa+ project been submitted?",
     tool: "summarize_submission_status",
-    response: "A Devpost entry is submitted and the public v0.2 demo is live. The Vimeo update still needs to be uploaded and linked; no payout has been awarded.",
-    evidence: "Devpost 5/5 · v0.2 public · payout not awarded",
+    response: "The public v0.2 demo is live and the local submission packet is ready. Devpost registration and final submission still need owner verification; no payout has been awarded.",
+    evidence: "Submission status unverified · v0.2 public · payout not awarded",
   },
   {
     prompt: "Plan a $100-plus opportunity I can finish in 40 hours.",
