@@ -41,6 +41,24 @@ because the rules weigh launch momentum and growth; no traction is claimed.
    applications. Re-evaluate the ranking whenever an official rule or deadline
    changes.
 
+## Competitive and marketplace signals (read-only scan)
+
+The 2026-09-21 inbox/public scan found three active Claude Builders Bounty
+competitor threads using `/opire try` on issues #2, #3, and #4. The public
+submissions emphasize the same signals that should guide our local work:
+small, reviewable diffs; explicit tests/fixtures; a clear trust boundary for
+untrusted PR text; and no claim of payment before a maintainer decision. These
+are engineering signals, not evidence that any entrant has been paid.
+
+The live marketplace audit recorded 30 advertised Opire rows but only 9
+canonical open/verifiable rows; several of the largest advertised amounts were
+locked, completed, donation/proposal requests, or highly crowded. The
+Superteam scan found one open agent-eligible listing (500 USDC pool, 41
+submissions) whose sponsor and payment guarantee were not verified. The raw
+snapshots are kept in `data/audit-2026-09-21.json` and
+`data/superteam-audit-2026-09-21.json` so later decisions can be compared to a
+timestamped source scan.
+
 ## Current status
 
 - RewardRadar's deterministic audit and 33-test suite pass locally.
