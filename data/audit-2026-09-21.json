@@ -1,0 +1,522 @@
+{
+  "captured_at": "2026-09-21T09:44:45.290597+00:00",
+  "execution_market": {
+    "endpoint": "https://api.execution.market/api/v1/tasks?status=published&limit=100",
+    "published_rows": 0,
+    "published_value_usd": 0,
+    "rows": []
+  },
+  "method": "Marketplace discovery followed by canonical GitHub verification",
+  "opire": {
+    "advertised_open_value_usd": 2309543.0,
+    "advertised_rows": 30,
+    "canonical_open_rows": 9,
+    "eliminated_or_unverifiable_rows": 21,
+    "endpoint": "https://api.opire.dev/rewards",
+    "rows": [
+      {
+        "advertised_usd": 1909480.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/microg/GmsCore/issues/2994",
+          "comments": 703,
+          "locked": true,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-18T18:15:28Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/microg/GmsCore/issues/2994",
+        "title": "[BOUNTY] RCS Support [14999$]",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 1366160.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/rodrigompy/bugb/issues/1",
+          "comments": 1,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-05-31T13:52:13Z",
+          "verified": true
+        },
+        "claimers": 0,
+        "marketplace_url": "https://github.com/rodrigompy/bugb/issues/1",
+        "title": "c1work",
+        "trying": 0
+      },
+      {
+        "advertised_usd": 250861.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/lb1192176991-lab/zeroeye/issues/2",
+          "comments": 41,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-21T09:32:08Z",
+          "verified": true
+        },
+        "claimers": 14,
+        "marketplace_url": "https://github.com/lb1192176991-lab/zeroeye/issues/2",
+        "title": "[BOUNTY] Kickama #304 - deterministic data seed ($50)",
+        "trying": 18
+      },
+      {
+        "advertised_usd": 135062.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/qtop/qtop/issues/551",
+          "comments": 0,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-10T00:49:09Z",
+          "verified": true
+        },
+        "claimers": 0,
+        "marketplace_url": "https://github.com/qtop/qtop/issues/551",
+        "title": "Make the PoH process lighter, more rewarding and more engaging for PR participants",
+        "trying": 0
+      },
+      {
+        "advertised_usd": 30630.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/go-gitea/gitea/issues/24635",
+          "comments": 38,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-05-16T02:49:11Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/go-gitea/gitea/issues/24635",
+        "title": "[Proposal] Support configuring permissions of automatic tokens of Actions jobs",
+        "trying": 1
+      },
+      {
+        "advertised_usd": 7300.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/godotengine/godot/issues/70796",
+          "comments": 116,
+          "locked": true,
+          "state": "open",
+          "state_reason": "reopened",
+          "updated_at": "2026-06-19T09:33:00Z",
+          "verified": true
+        },
+        "claimers": 14,
+        "marketplace_url": "https://github.com/godotengine/godot/issues/70796",
+        "title": "Readd support for web platform exports when using the C# (.NET) version of the engine",
+        "trying": 14
+      },
+      {
+        "advertised_usd": 5140.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/hexgrad/kokoro/issues/290",
+          "comments": 80,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-19T08:48:58Z",
+          "verified": true
+        },
+        "claimers": 11,
+        "marketplace_url": "https://github.com/hexgrad/kokoro/issues/290",
+        "title": "Donation/funding for german language",
+        "trying": 11
+      },
+      {
+        "advertised_usd": 1542.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/Ikalus1988/MisakaNet/issues/932",
+          "comments": 9,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-17T23:58:01Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/Ikalus1988/MisakaNet/issues/932",
+        "title": "[Test] Windows Voice hook verification",
+        "trying": 3
+      },
+      {
+        "advertised_usd": 1500.0,
+        "bot_installed": false,
+        "canonical": {
+          "reason": "GitHub HTTP 410",
+          "state": "unverifiable",
+          "verified": false
+        },
+        "claimers": 0,
+        "marketplace_url": "https://github.com/uswriting/zeroperl/issues/7",
+        "title": "Asynchronous Web APIs",
+        "trying": 0
+      },
+      {
+        "advertised_usd": 1110.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/typeorm/typeorm/issues/3357",
+          "comments": 96,
+          "locked": true,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-06-06T08:57:24Z",
+          "verified": true
+        },
+        "claimers": 27,
+        "marketplace_url": "https://github.com/typeorm/typeorm/issues/3357",
+        "title": "Migration generation drops and creates columns instead of altering resulting in data loss",
+        "trying": 27
+      },
+      {
+        "advertised_usd": 1040.0,
+        "bot_installed": true,
+        "canonical": {
+          "reason": "GitHub HTTP 404",
+          "state": "unverifiable",
+          "verified": false
+        },
+        "claimers": 4,
+        "marketplace_url": "https://github.com/Opire/docs/issues/27",
+        "title": "[Bounty] $20 - Add French as a supported language",
+        "trying": 5
+      },
+      {
+        "advertised_usd": 940.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/autokey/autokey/issues/87",
+          "comments": 281,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-20T09:54:26Z",
+          "verified": true
+        },
+        "claimers": 14,
+        "marketplace_url": "https://github.com/autokey/autokey/issues/87",
+        "title": "Add Wayland support",
+        "trying": 27
+      },
+      {
+        "advertised_usd": 395.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/zed-industries/zed/issues/4642",
+          "comments": 101,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-21T08:47:06Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/zed-industries/zed/issues/4642",
+        "title": "Helix keymap",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 360.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/velldharami44d/go-github/issues/7",
+          "comments": 7,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-10T03:38:10Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/velldharami44d/go-github/issues/7",
+        "title": "\ud83c\udfaf Support new stateless GitHub App installation access token format",
+        "trying": 3
+      },
+      {
+        "advertised_usd": 308.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/storybookjs/storybook/issues/12641",
+          "comments": 29,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-07-10T07:59:53Z",
+          "verified": true
+        },
+        "claimers": 5,
+        "marketplace_url": "https://github.com/storybookjs/storybook/issues/12641",
+        "title": "Problem with storybook-controls of type \"select\"",
+        "trying": 5
+      },
+      {
+        "advertised_usd": 300.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/typeorm/typeorm/issues/12578",
+          "comments": 18,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-07-10T22:33:32Z",
+          "verified": true
+        },
+        "claimers": 16,
+        "marketplace_url": "https://github.com/typeorm/typeorm/issues/12578",
+        "title": "OrmUtils.normalizeWhereCriteria() does not implement described default behaviour for invalidWhereValuesBehavior",
+        "trying": 16
+      },
+      {
+        "advertised_usd": 270.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/keycloak/keycloak/issues/14644",
+          "comments": 47,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-11T13:37:55Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/keycloak/keycloak/issues/14644",
+        "title": "External IDP tokens are not refreshed automatically for OAuth2 & OIDC IDPs when retrieving the external token",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 270.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/dot-Justin/BonziAssist/issues/7",
+          "comments": 60,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-08-28T12:30:00Z",
+          "verified": true
+        },
+        "claimers": 20,
+        "marketplace_url": "https://github.com/dot-Justin/BonziAssist/issues/7",
+        "title": "I am confused (help) I did everthing ready but this feels like a flipped slide",
+        "trying": 23
+      },
+      {
+        "advertised_usd": 270.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/secondlife/viewer/issues/4445",
+          "comments": 27,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-08T19:20:19Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/secondlife/viewer/issues/4445",
+        "title": "Replace tut with doctest",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 220.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/qtop/qtop/issues/433",
+          "comments": 31,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-04T06:48:39Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/qtop/qtop/issues/433",
+        "title": "Challenge #6: Improve testing and ci/cd cycles: bump up GitHub/gitlab coverage via Makefile and/or code management tooling, iron out code",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 200.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/jahmeergnlt/traefik/issues/1",
+          "comments": 42,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-21T07:10:20Z",
+          "verified": true
+        },
+        "claimers": 16,
+        "marketplace_url": "https://github.com/jahmeergnlt/traefik/issues/1",
+        "title": "\ud83c\udfaf Fix Race Condition Causing Stale Middleware Chain During Concurrent Provider Updates",
+        "trying": 22
+      },
+      {
+        "advertised_usd": 200.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/Leantime/leantime/issues/1099",
+          "comments": 25,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-09-08T19:23:12Z",
+          "verified": true
+        },
+        "claimers": 5,
+        "marketplace_url": "https://github.com/Leantime/leantime/issues/1099",
+        "title": "[FEATURE] Adding \"collaborators\" to a task (formerly: Assign tasks to multiple members)",
+        "trying": 5
+      },
+      {
+        "advertised_usd": 130.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/alisteuber4ee1/API-Integration-Pagination/issues/1",
+          "comments": 14,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-08-31T10:06:24Z",
+          "verified": true
+        },
+        "claimers": 11,
+        "marketplace_url": "https://github.com/alisteuber4ee1/API-Integration-Pagination/issues/1",
+        "title": "\ud83c\udfaf Fix Pagination Loop Termination When Fetching Repository Issues with 'Since' Filter",
+        "trying": 13
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/esp-rs/esp-hal/issues/4163",
+          "comments": 35,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-08-02T04:09:07Z",
+          "verified": true
+        },
+        "claimers": 2,
+        "marketplace_url": "https://github.com/esp-rs/esp-hal/issues/4163",
+        "title": "Support for Ethernet peripheral (ESP32 / ESP32-P4)",
+        "trying": 2
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/flowese/UdioWrapper/issues/7",
+          "comments": 56,
+          "locked": false,
+          "state": "open",
+          "state_reason": null,
+          "updated_at": "2026-09-07T12:35:58Z",
+          "verified": true
+        },
+        "claimers": 14,
+        "marketplace_url": "https://github.com/flowese/UdioWrapper/issues/7",
+        "title": "500 Server Error - Auto Solve hcapcha",
+        "trying": 22
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/madalynerlge2/gin/issues/1",
+          "comments": 20,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-08-31T10:04:23Z",
+          "verified": true
+        },
+        "claimers": 4,
+        "marketplace_url": "https://github.com/madalynerlge2/gin/issues/1",
+        "title": "\ud83c\udfaf Close Request Body on Authentication Middleware Early-Return to Prevent Connection Leaks",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 120.0,
+        "bot_installed": true,
+        "canonical": {
+          "canonical_url": "https://github.com/velldharami44d/go-github/issues/3",
+          "comments": 10,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "not_planned",
+          "updated_at": "2026-09-10T03:39:07Z",
+          "verified": true
+        },
+        "claimers": 3,
+        "marketplace_url": "https://github.com/velldharami44d/go-github/issues/3",
+        "title": "\ud83c\udfaf Support new stateless GitHub App installation token format",
+        "trying": 3
+      },
+      {
+        "advertised_usd": 117.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/qtop/qtop/issues/337",
+          "comments": 22,
+          "locked": false,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-06-23T10:29:50Z",
+          "verified": true
+        },
+        "claimers": 6,
+        "marketplace_url": "https://github.com/qtop/qtop/issues/337",
+        "title": "Request to execute qtop across two HPC clusters and apply first step of differential debugging",
+        "trying": 6
+      },
+      {
+        "advertised_usd": 110.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/formbricks/formbricks/issues/3302",
+          "comments": 48,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-06-02T05:48:10Z",
+          "verified": true
+        },
+        "claimers": 3,
+        "marketplace_url": "https://github.com/formbricks/formbricks/issues/3302",
+        "title": "[BUG] Internal Server Errors still shows success toast",
+        "trying": 3
+      },
+      {
+        "advertised_usd": 100.0,
+        "bot_installed": false,
+        "canonical": {
+          "canonical_url": "https://github.com/electron/electron/issues/48191",
+          "comments": 21,
+          "locked": true,
+          "state": "closed",
+          "state_reason": "completed",
+          "updated_at": "2026-06-15T17:20:40Z",
+          "verified": true
+        },
+        "claimers": 1,
+        "marketplace_url": "https://github.com/electron/electron/issues/48191",
+        "title": "macOS: dialog.showOpenDialog fails to show custom macOS packages (LSTypeIsPackage) when filtered by extension in Electron 36.2.0+ (worked in 35.7.5; 36.0.0 showed all files)",
+        "trying": 1
+      }
+    ]
+  },
+  "schema": "rewardradar.audit.v1"
+}
