@@ -1,0 +1,61 @@
+name: Validate RewardRadar
+
+on:
+  push:
+    branches:
+      - "codex/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Offline validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install locked Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install demo test dependencies
+        run: python -m pip install --disable-pip-version-check --no-input -r requirements-demo.txt
+
+      - name: Lint UI
+        run: pnpm lint
+
+      - name: Check Amazon submission boundary
+        run: pnpm run verify:amazon
+
+      - name: Run offline Python tests
+        run: python -B -m unittest discover -s tests -v
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Build static Pages artifact without deployment
+        run: pnpm run build:pages
+        env:
+          NEXT_PUBLIC_BASE_PATH: /rewardradar
+          REWARDRADAR_STATIC_EXPORT: "1"
