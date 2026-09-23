@@ -18,12 +18,16 @@ and ``tools/call``.
 from __future__ import annotations
 
 import argparse
+import copy
+import hashlib
 import json
+import threading
+import time
 import uuid
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .core import Candidate, assess_candidate, rank_candidates
 
@@ -34,7 +38,78 @@ DEMO_FIXTURE = Path(__file__).parents[1] / "data" / "demo_candidates.json"
 
 
 PROTOCOL_VERSION = "2025-11-25"
-SERVER_INFO = {"name": "rewardradar-alexa-plus", "version": "0.2.0"}
+SERVER_INFO = {"name": "rewardradar-alexa-plus", "version": "0.2.1"}
+
+
+class CaseStore:
+    """A tiny, memory-only casefile store for one local MCP server process.
+
+    The store deliberately keeps only public fixture-derived evidence. It has
+    no account, user, credential, or network identity, and it expires entries
+    instead of writing context to disk. A client can resume a case after a new
+    MCP initialize/reconnect only while the same local server process is live.
+    """
+
+    def __init__(
+        self,
+        *,
+        ttl_seconds: float = 15 * 60,
+        max_cases: int = 32,
+        clock: Callable[[], float] | None = None,
+    ) -> None:
+        if ttl_seconds <= 0:
+            raise ValueError("ttl_seconds must be positive")
+        if max_cases < 1:
+            raise ValueError("max_cases must be at least one")
+        self.ttl_seconds = float(ttl_seconds)
+        self.max_cases = int(max_cases)
+        self._clock = clock or time.monotonic
+        self._cases: dict[str, dict[str, Any]] = {}
+        self._lock = threading.RLock()
+
+    def _prune(self, now: float) -> None:
+        for case_id, entry in list(self._cases.items()):
+            if entry["expires_at"] <= now:
+                del self._cases[case_id]
+
+    def create(self, snapshot: dict[str, Any]) -> tuple[str, int]:
+        """Store one JSON-like fixture snapshot and return an opaque case id."""
+
+        now = self._clock()
+        with self._lock:
+            self._prune(now)
+            while len(self._cases) >= self.max_cases:
+                oldest = min(self._cases, key=lambda case_id: self._cases[case_id]["created_at"])
+                del self._cases[oldest]
+            case_id = uuid.uuid4().hex
+            self._cases[case_id] = {
+                "created_at": now,
+                "expires_at": now + self.ttl_seconds,
+                "snapshot": copy.deepcopy(snapshot),
+            }
+        return case_id, int(self.ttl_seconds)
+
+    def get(self, case_id: Any) -> dict[str, Any] | None:
+        """Return a copy of a live case, without exposing store internals."""
+
+        if not isinstance(case_id, str) or len(case_id) != 32:
+            return None
+        now = self._clock()
+        with self._lock:
+            self._prune(now)
+            entry = self._cases.get(case_id)
+            if entry is None:
+                return None
+            return copy.deepcopy(entry["snapshot"])
+
+
+DEFAULT_CASE_STORE = CaseStore()
+
+
+def _fixture_digest() -> str:
+    """Version evidence cases against the exact checked-in fixture bytes."""
+
+    return hashlib.sha256(DEMO_FIXTURE.read_bytes()).hexdigest()
 
 
 def _fixture_candidates() -> list[Candidate]:
@@ -121,13 +196,66 @@ def _bounded_float(value: Any, default: float, minimum: float, maximum: float) -
     return round(min(max(parsed, minimum), maximum), 2)
 
 
-def _plan_pursuit(arguments: dict[str, Any]) -> dict[str, Any]:
-    """Produce a read-only, voice-ready next-step brief from fixture evidence.
+def _decision_card(decision: Any) -> dict[str, Any]:
+    """Return public, inspectable evidence for one ranked fixture row."""
 
-    This tool intentionally plans but never submits, contacts, spends, or
-    configures a payout destination. The explicit owner gate is part of the
-    response so a voice client cannot turn a recommendation into an external
-    action by implication.
+    candidate = decision.candidate
+    gaps: list[str] = []
+    if not candidate.sponsor_verified:
+        gaps.append("Independently verify the sponsor before starting")
+    if not candidate.acceptance_clear:
+        gaps.append("Confirm acceptance criteria against the canonical source")
+    if not candidate.payout_rail_ready:
+        gaps.append("Confirm the accepted payout rail before starting")
+    if candidate.locked:
+        gaps.append("The fixture records a locked source")
+    if candidate.status.lower() != "open":
+        gaps.append(f"The fixture records source status={candidate.status}")
+    return {
+        "title": candidate.title,
+        "source": candidate.source,
+        "url": candidate.url,
+        "advertised_payout_usd": candidate.payout_usd,
+        "estimated_hours": candidate.estimated_hours,
+        "payment_probability": decision.payment_probability,
+        "expected_value_usd": decision.expected_value_usd,
+        "expected_hourly_usd": decision.expected_hourly_usd,
+        "verdict": decision.verdict,
+        "reasons": decision.reasons,
+        "verification_gaps": gaps,
+    }
+
+
+def _next_steps(recommendation: dict[str, Any] | None) -> list[str]:
+    if recommendation is None:
+        return [
+            "Review the canonical source manually",
+            "Do not spend time or money on an unmatched fixture row",
+        ]
+    return [
+        "Open the canonical source and verify it is still open",
+        "Confirm acceptance criteria and payout rail before starting",
+        "Prepare a local draft and tests before any owner-approved submission",
+    ]
+
+
+def _casefile_metadata(case_id: str, ttl_seconds: int, fixture_digest: str) -> dict[str, Any]:
+    return {
+        "case_id": case_id,
+        "state": "open",
+        "fixture_digest_sha256": fixture_digest,
+        "capture": "checked-in data/demo_candidates.json",
+        "expires_in_seconds": ttl_seconds,
+        "persistence": "memory-only within this local MCP server process; resumable after reconnect or initialize",
+    }
+
+
+def _plan_pursuit(arguments: dict[str, Any], case_store: CaseStore = DEFAULT_CASE_STORE) -> dict[str, Any]:
+    """Open a read-only, resumable evidence case from fixture evidence.
+
+    The stored case intentionally omits the raw user query and retains only
+    public fixture evidence, numeric constraints, and explicit verification
+    gates. It never submits, contacts, spends, or configures a payout.
     """
 
     query = str(arguments.get("query") or "").strip().lower()
@@ -141,48 +269,98 @@ def _plan_pursuit(arguments: dict[str, Any]) -> dict[str, Any]:
         and decision.candidate.estimated_hours <= max_hours
         and decision.verdict in {"pursue", "watch"}
     ]
-    if not eligible:
-        return {
-            "mode": "fixture",
-            "query": query,
+    recommendation = _decision_card(eligible[0]) if eligible else None
+    alternatives = [
+        _decision_card(decision)
+        for decision in decisions
+        if recommendation is None or decision.candidate.title != recommendation["title"]
+    ][:3]
+    next_steps = _next_steps(recommendation)
+    fixture_digest = _fixture_digest()
+    case_id, ttl_seconds = case_store.create(
+        {
+            "fixture_digest_sha256": fixture_digest,
+            "capture": "checked-in data/demo_candidates.json",
             "constraints": {"max_hours": max_hours, "minimum_payout_usd": minimum_payout},
-            "recommendation": None,
-            "voice_summary": "No checked-in opportunity meets those limits.",
-            "next_steps": ["Review the canonical source manually", "Do not spend time or money on an unmatched row"],
+            "recommendation": recommendation,
+            "alternatives": alternatives,
+            "next_steps": next_steps,
             "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
             "disclosure": "Fixture replay; no live source, submission, or payment action was performed.",
         }
-
-    decision = eligible[0]
-    candidate = decision.candidate
+    )
+    if recommendation is None:
+        voice_summary = "No checked-in opportunity meets those limits."
+    else:
+        voice_summary = (
+            f"{recommendation['title']} is the best fixture match at an advertised "
+            f"${recommendation['advertised_payout_usd']:,.2f}; expected value is "
+            f"${recommendation['expected_value_usd']:,.2f}, not guaranteed income."
+        )
     return {
         "mode": "fixture",
         "query": query,
         "constraints": {"max_hours": max_hours, "minimum_payout_usd": minimum_payout},
-        "recommendation": {
-            "title": candidate.title,
-            "source": candidate.source,
-            "url": candidate.url,
-            "advertised_payout_usd": candidate.payout_usd,
-            "estimated_hours": candidate.estimated_hours,
-            "payment_probability": decision.payment_probability,
-            "expected_value_usd": decision.expected_value_usd,
-            "expected_hourly_usd": decision.expected_hourly_usd,
-            "verdict": decision.verdict,
-            "reasons": decision.reasons,
-        },
-        "voice_summary": (
-            f"{candidate.title} is the best fixture match at an advertised "
-            f"${candidate.payout_usd:,.2f}; expected value is "
-            f"${decision.expected_value_usd:,.2f}, not guaranteed income."
-        ),
-        "next_steps": [
-            "Open the canonical source and verify it is still open",
-            "Confirm acceptance criteria and payout rail before starting",
-            "Prepare a local draft and tests before any owner-approved submission",
-        ],
+        "recommendation": recommendation,
+        "voice_summary": voice_summary,
+        "next_steps": next_steps,
+        "casefile": _casefile_metadata(case_id, ttl_seconds, fixture_digest),
         "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
         "disclosure": "Fixture replay; no live source, submission, or payment action was performed.",
+    }
+
+
+def _review_pursuit_case(arguments: dict[str, Any], case_store: CaseStore = DEFAULT_CASE_STORE) -> dict[str, Any]:
+    """Resume a local casefile without refreshing sources or taking action."""
+
+    case_id = arguments.get("case_id")
+    focus = str(arguments.get("focus") or "overview").strip().lower()
+    allowed_focuses = {"overview", "comparison", "evidence", "next_steps"}
+    if focus not in allowed_focuses:
+        return {
+            "case_found": False,
+            "reason": "focus must be overview, comparison, evidence, or next_steps",
+            "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
+        }
+    case = case_store.get(case_id)
+    if case is None:
+        return {
+            "case_found": False,
+            "state": "expired_or_unknown",
+            "reason": "Case ids are opaque, memory-only, and expire automatically.",
+            "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
+            "disclosure": "No source was refreshed and no external action was performed.",
+        }
+    if case["fixture_digest_sha256"] != _fixture_digest():
+        return {
+            "case_found": False,
+            "state": "fixture_changed",
+            "reason": "The checked-in fixture changed after this case was captured; start a new case.",
+            "safety": {"external_action": "owner_confirmation_required", "payout_guaranteed": False},
+            "disclosure": "Stale fixture evidence is not reused as a current recommendation.",
+        }
+
+    evidence_card: dict[str, Any] = {
+        "recommendation": case["recommendation"],
+        "fixture_digest_sha256": case["fixture_digest_sha256"],
+        "capture": case["capture"],
+    }
+    if focus in {"overview", "comparison"}:
+        evidence_card["alternatives"] = case["alternatives"]
+    if focus in {"overview", "evidence"}:
+        evidence_card["verification_gaps"] = (
+            case["recommendation"]["verification_gaps"] if case["recommendation"] else []
+        )
+    if focus in {"overview", "next_steps"}:
+        evidence_card["next_steps"] = case["next_steps"]
+    return {
+        "case_found": True,
+        "state": "open",
+        "focus": focus,
+        "constraints": case["constraints"],
+        "evidence_card": evidence_card,
+        "safety": case["safety"],
+        "disclosure": case["disclosure"],
     }
 
 
@@ -217,7 +395,7 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
     },
     {
         "name": "plan_pursuit",
-        "description": "Build a read-only, voice-ready next-step brief under payout and time limits; never submits or spends.",
+        "description": "Open a read-only, fixture-backed evidence case under payout and time limits; never submits or spends.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -227,10 +405,28 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "name": "review_pursuit_case",
+        "description": "Resume one opaque local evidence case after reconnect; never refreshes sources or takes an external action.",
+        "inputSchema": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": {
+                "case_id": {"type": "string", "minLength": 32, "maxLength": 32},
+                "focus": {
+                    "type": "string",
+                    "enum": ["overview", "comparison", "evidence", "next_steps"],
+                },
+            },
+        },
+    },
 ]
 
 
-def handle_rpc(message: dict[str, Any]) -> dict[str, Any] | None:
+def handle_rpc(
+    message: dict[str, Any],
+    case_store: CaseStore = DEFAULT_CASE_STORE,
+) -> dict[str, Any] | None:
     """Handle one JSON-RPC request and return its response, if applicable."""
 
     method = message.get("method")
@@ -261,7 +457,8 @@ def handle_rpc(message: dict[str, Any]) -> dict[str, Any] | None:
             "search_rewards": _search_rewards,
             "verify_funding": _verify_funding,
             "summarize_submission_status": _submission_status,
-            "plan_pursuit": _plan_pursuit,
+            "plan_pursuit": lambda arguments: _plan_pursuit(arguments, case_store),
+            "review_pursuit_case": lambda arguments: _review_pursuit_case(arguments, case_store),
         }
         handler = handlers.get(name)
         if handler is None:
@@ -274,7 +471,9 @@ def handle_rpc(message: dict[str, Any]) -> dict[str, Any] | None:
 
 
 class MCPHandler(BaseHTTPRequestHandler):
-    server_version = "RewardRadarMCP/0.1"
+    # Keep the HTTP response identity synchronized with the MCP initialize
+    # identity so a local judge does not observe two incompatible versions.
+    server_version = f"RewardRadarMCP/{SERVER_INFO['version']}"
 
     def _send_json(self, payload: dict[str, Any], status: int = HTTPStatus.OK) -> None:
         body = json.dumps(payload, sort_keys=True).encode("utf-8")
@@ -304,7 +503,7 @@ class MCPHandler(BaseHTTPRequestHandler):
         if not isinstance(message, dict):
             self._send_json({"jsonrpc": "2.0", "id": None, "error": {"code": -32600, "message": "Invalid Request"}}, HTTPStatus.BAD_REQUEST)
             return
-        response = handle_rpc(message)
+        response = handle_rpc(message, self.server.case_store)
         if response is None:
             self.send_response(HTTPStatus.ACCEPTED)
             self.send_header("Mcp-Session-Id", self.server.session_id)
@@ -322,6 +521,7 @@ class MCPServer(ThreadingHTTPServer):
     def __init__(self, address: tuple[str, int]):
         super().__init__(address, MCPHandler)
         self.session_id = uuid.uuid4().hex
+        self.case_store = CaseStore()
 
 
 def main(argv: list[str] | None = None) -> None:

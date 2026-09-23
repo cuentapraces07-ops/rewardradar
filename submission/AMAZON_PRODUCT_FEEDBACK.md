@@ -7,8 +7,10 @@ is not a published response until the owner confirms the final Devpost edit.
 
 - **Alexa+ / MCP:** a self-hosted Streamable HTTP endpoint implementing MCP
   `2025-11-25`. The checked-in server exposes `search_rewards`,
-  `verify_funding`, `summarize_submission_status`, and the bounded,
-  read-only `plan_pursuit` tool.
+  `verify_funding`, `summarize_submission_status`, the bounded read-only
+  `plan_pursuit` tool, and `review_pursuit_case`. The latter resumes an
+  expiring, memory-only fixture case after reconnect without retaining a user
+  profile or making a network request.
 - **Strands Agents SDK:** the dashboard's four-node decision engine uses a
   deterministic adapter for reproducible local evidence. The Bedrock entry
   point is included, but no live Bedrock invocation is claimed in the
@@ -20,11 +22,11 @@ is not a published response until the owner confirms the final Devpost edit.
 ## What worked well
 
 The MCP surface was straightforward to keep inspectable: protocol discovery,
-tool schemas, bounded inputs, source-backed results, and refusal paths are all
-covered by local tests. The simulation made it possible to demonstrate the
-voice interaction without pretending that a device connection or payout had
-occurred. The static dashboard loads quickly and keeps evidence, uncertainty,
-and effort visible beside the headline amount.
+tool schemas, bounded inputs, source-backed results, case expiry/isolation,
+and refusal paths are all covered by local tests. The simulation made it
+possible to demonstrate a resumed decision context without pretending that a
+device connection or payout had occurred. The static dashboard loads quickly
+and keeps evidence, uncertainty, and effort visible beside the headline amount.
 
 ## What needs work
 

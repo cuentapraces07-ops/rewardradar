@@ -12,9 +12,8 @@ The endpoint is `POST http://127.0.0.1:8787/mcp`; `GET /health` returns a
 readiness check. It implements the minimal JSON-RPC surface a client needs:
 
 - `initialize` advertises MCP protocol `2025-11-25` and the server identity.
-- `tools/list` exposes `search_rewards`, `verify_funding`,
-  `summarize_submission_status`, `summarize_evidence_signals`, and
-  `plan_pursuit`.
+- `tools/list` exposes exactly `search_rewards`, `verify_funding`,
+  `summarize_submission_status`, `plan_pursuit`, and `review_pursuit_case`.
 - `tools/call` returns structured JSON plus a text representation suitable for
   a voice response.
 
@@ -24,19 +23,19 @@ claim that a reward is guaranteed. The response explicitly labels fixture
 replay and separates advertised payout from earned income. A production
 deployment would use HTTPS and a reviewed live-source adapter.
 
-`summarize_evidence_signals` is a deterministic, read-only ledger of bounded
-competition, delivery-risk, acceptance-gate, and deadline-filter signals. It
-explains how each signal changes ranking or test gates without treating
-competitor activity or an advertised prize as evidence of a payout.
-
 `plan_pursuit` is the agentic conversation layer: it accepts a natural
 constraint such as “show me a reward above $100 that fits in 40 hours,” ranks
-the checked-in evidence, and returns a short voice summary plus safe next
-steps. It is deliberately read-only. The response carries an explicit
-`owner_confirmation_required` gate and never submits work, contacts a sponsor,
-spends money, or configures a payout destination.
+the checked-in evidence, and opens an opaque evidence case with a short voice
+summary plus safe next steps. `review_pursuit_case` can resume that case after
+a new `initialize` or reconnect to the same local server process. It returns a
+structured evidence card for comparison, verification gaps, or next steps.
+Cases are capped, expire automatically, retain only public fixture-derived
+evidence and numeric constraints, and never write to disk. Both tools are
+deliberately read-only: they carry an explicit `owner_confirmation_required`
+gate and never submit work, contact a sponsor, spend money, or configure a
+payout destination.
 
-## Reproduce the four-step demo
+## Reproduce the resumable case demo
 
 ```bash
 python - <<'PY'
@@ -57,16 +56,22 @@ for request in [
 PY
 ```
 
+Use the returned `casefile.case_id` in a later call:
+
+```json
+{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"review_pursuit_case","arguments":{"case_id":"<opaque-id>","focus":"comparison"}}}
+```
+
 ## Offline protocol verification
 
 ```bash
 python -m unittest tests.test_alexa_mcp_server tests.test_alexa_mcp_http -v
 ```
 
-The local contract suite passes 12 tests, including loopback `/health`,
-JSON-RPC `initialize`/`tools/list`, and the no-body
-`notifications/initialized` response. It does not contact Amazon, Devpost, or
-any payment service.
+The local contract suite covers loopback `/health`, JSON-RPC
+`initialize`/`tools/list`, the no-body `notifications/initialized` response,
+case expiry, isolation, and a real HTTP reconnect that resumes a case. It does
+not contact Amazon, Devpost, or any payment service.
 
 This is a local build artifact pending owner confirmation for the Amazon
 registration and any later public upload. It is not a claim of Amazon

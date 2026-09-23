@@ -20,7 +20,7 @@ truth, funding signals, and competition before answering.
 ## What we built
 
 RewardRadar exposes a self-hosted MCP endpoint at `/mcp` using MCP protocol
-`2025-11-25`. An Alexa+-style request can call four tools:
+`2025-11-25`. An Alexa+-style request can call five tools:
 
 1. `search_rewards` ranks opportunities by payment-adjusted hourly value.
 2. `verify_funding` separates escrow and sponsor evidence from an advertised
@@ -28,13 +28,22 @@ RewardRadar exposes a self-hosted MCP endpoint at `/mcp` using MCP protocol
 3. `summarize_submission_status` reports what is registered, submitted, or
    actually paid without inventing progress.
 4. `plan_pursuit` turns a spoken constraint into a bounded, read-only next-step
-   brief with a voice summary, evidence reasons, and an explicit owner gate.
+   brief with a voice summary, evidence reasons, an explicit owner gate, and
+   an opaque local case id.
+5. `review_pursuit_case` resumes that expiring, memory-only case after a new
+   MCP initialize/reconnect and returns an evidence card for comparison,
+   verification gaps, or next steps.
 
-The endpoint is backed by the same four-specialist Strands graph as the web
-dashboard: Scout, Verifier, Risk Analyst, and ROI Ranker. Deterministic Python
+The dashboard demo separately exercises the four-specialist Strands graph:
+Scout, Verifier, Risk Analyst, and ROI Ranker. This MCP endpoint uses the same
+checked-in fixture and deterministic ranking primitives. Deterministic Python
 guardrails own the arithmetic; model output cannot silently turn an unverified
 reward into income. No tool can submit work, contact a sponsor, spend money, or
 configure a payout destination.
+
+The casefile retains only public fixture evidence and numeric constraints; it
+is capped, expires automatically, and is never written to disk. It is context
+for a local demo, not an account, user profile, or live opportunity record.
 
 ## Why voice helps
 

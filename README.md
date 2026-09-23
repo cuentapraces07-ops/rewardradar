@@ -74,10 +74,17 @@ The repository includes a credential-free self-hosted MCP endpoint for the
 Alexa+ track. Run `python -m agent.alexa_mcp_server --port 8787` and send
 JSON-RPC requests to `POST /mcp`. It exposes the evidence-first RewardRadar
 fixture via `search_rewards`, `verify_funding`, and
-`summarize_submission_status`; see `docs/ALEXA_PLUS.md`. The prototype is
+`summarize_submission_status`, plus `plan_pursuit` and the resumable,
+memory-only `review_pursuit_case` tool; see
+`docs/ALEXA_PLUS.md`. The prototype is
 explicitly fixture-only and does not claim a live Alexa+ integration or a prize.
 A short English walkthrough is committed at
-[`public/media/AlexaPlus-demo-draft.mp4`](public/media/AlexaPlus-demo-draft.mp4).
+[`public/media/AlexaPlus-demo-v0.2.mp4`](public/media/AlexaPlus-demo-v0.2.mp4).
+The v0.2.1 generator now renders an actual local case/reconnect transcript;
+that new local render is not represented as uploaded or linked from a form.
+Run `pnpm verify:amazon` to validate the local repository reference, license,
+MCP surface, owner-gated submission notes, demo duration, and absence of
+labeled live credentials or payout data.
 
 ### Dashboard
 
@@ -108,7 +115,7 @@ data/              transparent demonstration inputs
 docs/              architecture and submission assets
 submission/        video narration and three builder.aws bonus-post drafts
 tests/             scoring guardrail tests
-public/media/      public English Alexa+ walkthrough draft
+  public/media/      checked-in English Alexa+ walkthrough asset
 SUBMISSION_CHECKLIST.md  rule-by-rule readiness register
 DISCLOSURES.md           AI assistance and dependency disclosure
 ```

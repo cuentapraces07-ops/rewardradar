@@ -1,10 +1,8 @@
 # Amazon Build, Ship, Shape — local readiness record
 
 This is a local engineering audit. It is not a claim of eligibility, selection,
-or payment. A read-only check on 21 September 2026 observed the authenticated
-Devpost submission `1183598` as **SUBMITTED (5/5 steps done)** and the public
-project page as associated with the Amazon hackathon; the local drafts below
-are not the authoritative copy of that submission.
+payment, or current Devpost state. The local drafts below are not the
+authoritative copy of any Devpost entry.
 
 The local presentation draft is in
 `docs/AMAZON-SUBMISSION-DRAFT.md`.
@@ -16,10 +14,11 @@ The local field-by-field map is in `docs/AMAZON-FIELD-MAP.md`.
 
 - The local server exposes `POST /mcp` and a `/health` endpoint.
 - The JSON-RPC handshake advertises MCP protocol `2025-11-25`.
-- The server exposes six explicit tools, including the read-only
-  `summarize_evidence_signals` ledger and the quote-only
-  `simulate_x402_quote` preview; all are called through the same `tools/call`
-  boundary tested in `tests/test_alexa_mcp_server.py`.
+- The server exposes exactly five read-only tools through the same
+  `tools/call` boundary tested in `tests/test_alexa_mcp_server.py`:
+  `search_rewards`, `verify_funding`, `summarize_submission_status`, and
+  `plan_pursuit`, plus `review_pursuit_case` for an expiring, memory-only
+  casefile that survives a reconnect to the same local server process.
 - The implementation is fixture-only, credential-free, read-only, and never
   submits a project or configures a payout destination.
 - The checked-in demo and source explain that a production deployment would
@@ -27,7 +26,7 @@ The local field-by-field map is in `docs/AMAZON-FIELD-MAP.md`.
 
 ## Local evidence
 
-The following checks passed on 21 September 2026:
+Current local validation on 23 September 2026 included:
 
 ```text
 pnpm lint
@@ -35,15 +34,19 @@ pnpm build
 python -m unittest discover -s tests -v
 ```
 
-The Python suite ran 47 tests; one optional SDK-dependent test was skipped.
-The build completed successfully and produced the `/` and `/tv` routes.
+In the current local worktree, the offline Python suite ran 42 tests; one
+optional SDK-dependent test was skipped. `pnpm verify:amazon` passed all 11
+local checks against the checked-in 94.89-second v0.2 demo, `pnpm lint` exited
+successfully, and `pnpm build` completed successfully for `/` and `/tv`.
 
-The local transparency correction is recorded in commit `1983fd5` on the
-working branch. It labels the local draft as unsubmitted; the later authenticated
-Devpost observation is recorded separately in `submission/AMAZON_CHECKLIST.md`.
-No entry, prize claim, or payment is represented as earned. The submitted page
-currently points to Vimeo `1226715422`, while the latest local demo is
-`1228312635`; no external edit was made.
+The v0.2.1 local renderer also produced a 111.55-second H.264/AAC demo that
+uses a real case/reconnect transcript. It has not been uploaded, linked from a
+form, or represented as public evidence.
+
+No entry, prize claim, payment, or current Devpost state is represented as
+earned or verified. This local record does not mutate any public page; the
+owner must verify the current public video URL, repository branch, visibility,
+and entry state immediately before any submission decision.
 
 The repeatable local preflight is `pnpm verify:amazon`; it checks the public
 repository/license reference, MCP surface, local friction log, demo duration,

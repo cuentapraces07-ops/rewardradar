@@ -1,8 +1,8 @@
 # RewardRadar Alexa+ v0.2 verification packet
 
-Recorded locally on 2026-09-19 (America/Mexico_City). This packet documents a
-credential-free fixture run. It is evidence for review, not a claim that a
-live Alexa device, a live payout, or a prize has been obtained.
+Historical record from 2026-09-19 (America/Mexico_City). This packet documents
+a credential-free fixture run from that date. It is evidence for review, not a
+claim that a live Alexa device, a live payout, or a prize has been obtained.
 
 ## What changed
 
@@ -21,7 +21,7 @@ live Alexa device, a live payout, or a prize has been obtained.
 
 ```text
 python -m unittest discover -s tests -v
-Ran 38 tests in the current verification pass; one optional SDK test skipped.
+Ran 38 tests in that historical verification pass; one optional SDK test skipped.
 OK (skipped=1)
 
 python -m compileall -q agent tests scripts
@@ -49,29 +49,35 @@ needed for the credential-free Alexa+ prototype path.
 
 ## Submission boundary
 
-The v0.2 video is now publicly uploaded at
-https://vimeo.com/1228312635. The local submission packet is prepared, but
-Devpost registration and final submission remain owner-controlled and are not
-verified here. No account change, maintainer message, or payout action is
+This historical local record references the v0.2 Vimeo URL
+https://vimeo.com/1228312635. Current public accessibility and any Devpost
+linkage require owner verification. The local submission packet is prepared,
+but Devpost registration and final submission remain owner-controlled and are
+not verified here. No account change, maintainer message, or payout action is
 claimed by this packet.
 
-## Fresh local verification — 2026-09-21 13:55 America/Mexico_City
+## Fresh local verification — 2026-09-23 America/Mexico_City
 
 The current checkout was revalidated without changing any external account:
 
 ```text
-python -m unittest discover -s tests -p 'test_*.py'
-47 tests, 1 skipped, OK
+python -m unittest discover -s tests -v
+41 passed, 1 optional skip (42 total), OK
 
 pnpm run verify:amazon
-9 checks passed, 0 failed; demo 94.89s
+11 checks passed, 0 failed; checked-in demo 94.89s
 
 pnpm lint
 PASS
 
 pnpm build
-PASS — Vinext client, RSC, client, and SSR environments built
+PASS — local build completed for `/` and `/tv`
 ```
+
+The same local validation separately generated a non-checked-in v0.2.1 local
+render from a real `plan_pursuit`/`review_pursuit_case` transcript. `ffprobe`
+reports H.264/AAC, 1600×900, and 111.55 seconds. The artifact remains local
+and has not been uploaded or linked from a Devpost entry.
 
 This confirms the local Alexa+ evidence packet remains reproducible. It does
 not prove a live Alexa+ account, a submitted Devpost entry, eligibility, a

@@ -11,13 +11,14 @@ constraint into a bounded, auditable next-step plan.
 
 ## What changed in v0.2
 
-RewardRadar now exposes `plan_pursuit` alongside `search_rewards`,
-`verify_funding`, `summarize_submission_status`, `summarize_evidence_signals`,
-and the quote-only `simulate_x402_quote` preview. A voice request such as
+RewardRadar exposes `plan_pursuit` alongside `search_rewards`,
+`verify_funding`, `summarize_submission_status`, and `review_pursuit_case`.
+A voice request such as
 “show me an opportunity above $100 that fits in 40 hours” is evaluated against
 the checked-in evidence fixture. The response discloses the source, constraints,
 assumptions, reasons, and next steps, then stops at an explicit owner
-confirmation gate.
+confirmation gate. A later reconnect can review the same expiring,
+memory-only evidence case without recreating its public-fixture context.
 
 The tool is intentionally read-only: it does not submit work, contact a
 sponsor, spend money, configure a payout destination, or report an advertised
@@ -26,15 +27,15 @@ limits and a no-match result does not invent work.
 
 ## Validation
 
-- 47 Python tests pass; one optional CALL-E SDK test is skipped because that
-  integration is not installed.
+- 41 Python tests pass; one optional CALL-E SDK test is skipped (42 total)
+  because that integration is not installed.
 - `pnpm lint` passes.
-- Next static build passes for `/` and `/tv`.
-- Vinext client, RSC, and SSR build passes.
-- The local replay exposes four voice turns, including the bounded
-  `plan_pursuit` owner-confirmation step.
-- The English local demo is 94.89 seconds at 1600×900, below three minutes,
-  with the explicitly selected male `en-US-GuyNeural` narration voice.
+- `pnpm build` passes for `/` and `/tv`.
+- The local case workflow opens a bounded `plan_pursuit` case and resumes it
+  through `review_pursuit_case` after a new initialize.
+- The regenerated local v0.2.1 demo is 111.55 seconds at 1600×900, below
+  three minutes, with the explicitly selected male `en-US-GuyNeural`
+  narration voice. It is not uploaded or linked from this draft.
 
 ## Transparent limits
 
@@ -48,4 +49,6 @@ external action.
 
 - Repository: `https://github.com/cuentapraces07-ops/rewardradar`
 - Video: replace the existing draft link with `https://vimeo.com/1228312635`.
-- Public repository commit: `98b5c67ce3f3cb36728db0d65de23cdc3367f0a8` on branch `codex/alexa-plus-v0.2` (verified read-only; owner must confirm hackathon-window timing).
+- Public feature branch: `codex/alexa-plus-v0.2` (owner must verify the
+  current public commit and hackathon-window timing before using this copy;
+  the repository root may resolve to a different default branch).

@@ -7,16 +7,16 @@ payment as earned.
 | Requirement | Evidence | Status |
 |---|---|---|
 | Alexa+ MCP server, Streamable HTTP, protocol 2025-11-25+ | `agent/alexa_mcp_server.py`, `tests/test_alexa_mcp_server.py` | Ready locally; `/health`, initialize, tools/list, tools/call smoke-tested |
-| Simulated Alexa+ experience | `docs/ALEXA_PLUS.md`, structured `tools/call` responses, bounded `plan_pursuit` | Ready locally |
+| Simulated Alexa+ experience | `docs/ALEXA_PLUS.md`, structured `tools/call` responses, bounded `plan_pursuit` and expiring `review_pursuit_case` | Ready locally |
 | Fire TV / Vega web experience | `/tv` route and `docs/FIRE_TV.md` | Ready locally; device/simulator proof pending |
 | Ring API boundary | `agent/ring_adapter.py`, `docs/RING_BEE.md` | Token/device proof pending |
 | Bee data boundary | `agent/bee_adapter.py`, `docs/RING_BEE.md` | Real Bee/Apple Watch export required |
 | AWS Builder mini challenge | Existing Strands graph and Bedrock entry point; runtime evidence still needed | Pending evidence |
 | Open Source mini challenge | Existing public repo; qualifying challenge-window contribution must be recorded | Pending window/URL |
 | Public GitHub repository with open-source license | `LICENSE`, public RewardRadar repository at commit `3e336a9` | Public and reachable; v0.2 files uploaded |
-| Demo video under three minutes, public, English | [Vimeo v0.2](https://vimeo.com/1228312635), 94.89 seconds, English, male narration | Public upload complete; Devpost still points to the older video |
+| Demo video under three minutes, public, English | [Vimeo v0.2](https://vimeo.com/1228312635), 94.89 seconds, English, male narration | Public v0.2 link recorded; verify the current Devpost video field immediately before any submission |
 | Product feedback for each API/SDK | `submission/AMAZON_PRODUCT_FEEDBACK.md` | Ready locally; owner review pending |
-| Explanation of changes made during window | `submission/ALEXA_PLUS_SUBMISSION.md`; v0.2.0 adds bounded `plan_pursuit` and tests | Pending timestamp/commit |
+| Explanation of changes made during window | `submission/ALEXA_PLUS_SUBMISSION.md`; v0.2.0 added bounded `plan_pursuit`, while the local v0.2.1 work adds an expiring casefile, reconnect review, and tests | Pending a public commit/timestamp for v0.2.1 |
 | Devpost registration | No authenticated Devpost state is available in this checkout | Owner must verify registration and eligibility |
 | Devpost final submission | Local packet and public demo are prepared; submission state is not independently verified | Owner must review and submit; no payout is claimed |
 
