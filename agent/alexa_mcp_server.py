@@ -21,6 +21,7 @@ import argparse
 import copy
 import hashlib
 import json
+import re
 import threading
 import time
 import uuid
@@ -218,6 +219,8 @@ def _decision_card(decision: Any) -> dict[str, Any]:
         "advertised_payout_usd": candidate.payout_usd,
         "estimated_hours": candidate.estimated_hours,
         "payment_probability": decision.payment_probability,
+        "probability_basis": candidate.probability_basis
+        or "Explicit fixture scenario input; not an observed win rate",
         "expected_value_usd": decision.expected_value_usd,
         "expected_hourly_usd": decision.expected_hourly_usd,
         "verdict": decision.verdict,
@@ -294,8 +297,10 @@ def _plan_pursuit(arguments: dict[str, Any], case_store: CaseStore = DEFAULT_CAS
     else:
         voice_summary = (
             f"{recommendation['title']} is the best fixture match at an advertised "
-            f"${recommendation['advertised_payout_usd']:,.2f}; expected value is "
-            f"${recommendation['expected_value_usd']:,.2f}, not guaranteed income."
+            f"${recommendation['advertised_payout_usd']:,.2f}. Under the stated "
+            f"planning scenario, its illustrative value is "
+            f"${recommendation['expected_value_usd']:,.2f}; this is not an empirical "
+            "win-rate estimate, forecast, or guaranteed income."
         )
     return {
         "mode": "fixture",
@@ -364,6 +369,170 @@ def _review_pursuit_case(arguments: dict[str, Any], case_store: CaseStore = DEFA
     }
 
 
+_REQUEST_NUMBER = r"\d+(?:,\d{3})*(?:\.\d{1,2})?"
+_EXTERNAL_ACTION_REQUEST = re.compile(
+    r"\b(?:submit(?:ted|ting)?|apply|send|email|message|contact|call|pay(?:ment)?|"
+    r"transfer|withdraw|claim|register|sign[\s-]*up|log[\s-]*in|upload|publish|"
+    r"buy|purchase|kyc|wallet|stripe)\b",
+    re.IGNORECASE,
+)
+
+
+def _request_constraints(request: str) -> tuple[float, float, dict[str, bool]]:
+    """Extract only explicit dollar-floor and effort constraints from a request."""
+
+    payout_match = re.search(rf"\$\s*({_REQUEST_NUMBER})", request)
+    if payout_match is None:
+        payout_match = re.search(
+            rf"\b(?:at least|over|above|more than|minimum(?: payout)?(?: of)?)\s+\$?({_REQUEST_NUMBER})\b",
+            request,
+            re.IGNORECASE,
+        )
+    hours_match = re.search(
+        rf"\b(?:within|under|less than|in|for|at most|max(?:imum)?(?: of)?|finish in|fit in)\s+({_REQUEST_NUMBER})\s*(?:hours?|hrs?|h)\b",
+        request,
+        re.IGNORECASE,
+    )
+
+    minimum_payout = float(payout_match.group(1).replace(",", "")) if payout_match else 50.0
+    max_hours = float(hours_match.group(1).replace(",", "")) if hours_match else 8.0
+    return (
+        _bounded_float(minimum_payout, 50, 0, 1_000_000),
+        _bounded_float(max_hours, 8, 0.5, 168),
+        {"minimum_payout_usd": payout_match is not None, "max_hours": hours_match is not None},
+    )
+
+
+def _respond_to_request(arguments: dict[str, Any], case_store: CaseStore = DEFAULT_CASE_STORE) -> dict[str, Any]:
+    """Route a short natural-language prompt to a bounded, read-only fixture operation.
+
+    Prompt text is parsed in process and is never persisted in the case store.
+    The only supported operations are a fixture-backed plan, a read-only status
+    summary, or a review of the caller-provided opaque case id.
+    """
+
+    request = arguments.get("request")
+    if not isinstance(request, str) or not request.strip():
+        return {
+            "request_supported": False,
+            "reason": "Enter a short request, such as a payout floor and maximum number of hours.",
+            "safety": {"external_action": "disabled", "payout_guaranteed": False},
+        }
+    request = request.strip()
+    if len(request) > 280:
+        return {
+            "request_supported": False,
+            "reason": "Requests are limited to 280 characters; shorten it and try again.",
+            "safety": {"external_action": "disabled", "payout_guaranteed": False},
+        }
+
+    normalized = request.lower()
+    if re.search(r"\b(?:submitted|submission status|registration status|did i enter)\b", normalized):
+        status = _submission_status({"track": "Alexa+"})
+        status.update(
+            {
+                "intent": "submission_status",
+                "request_text_retained": False,
+                "voice_summary": "RewardRadar is a prototype; its registration and submission are not verified, and no payout has been awarded.",
+            }
+        )
+        return status
+
+    if _EXTERNAL_ACTION_REQUEST.search(normalized):
+        return {
+            "request_supported": False,
+            "intent": "external_action_unavailable",
+            "voice_summary": "This local demo is read-only. It cannot submit, contact anyone, create accounts, publish, pay, or configure a wallet.",
+            "safety": {"external_action": "disabled", "payout_guaranteed": False},
+            "disclosure": "No tool, account, network, or external action was performed.",
+        }
+
+    case_id = arguments.get("case_id")
+    if isinstance(case_id, str) and case_id:
+        if re.search(r"\b(fund|funded|funding|escrow|sponsor verified|payout rail)\b", normalized):
+            case = case_store.get(case_id)
+            if case is None:
+                return {
+                    "case_found": False,
+                    "state": "expired_or_unknown",
+                    "intent": "verify_funding",
+                    "voice_summary": "I could not verify funding because the saved evidence case is missing or expired. Start a new fixture review first.",
+                    "safety": {"external_action": "disabled", "payout_guaranteed": False},
+                }
+            if case["fixture_digest_sha256"] != _fixture_digest():
+                return {
+                    "case_found": False,
+                    "state": "fixture_changed",
+                    "intent": "verify_funding",
+                    "voice_summary": "I did not reuse the saved case because its fixture evidence has changed. Start a new review first.",
+                    "safety": {"external_action": "disabled", "payout_guaranteed": False},
+                }
+            recommendation = case.get("recommendation")
+            if not recommendation:
+                return {
+                    "case_found": True,
+                    "intent": "verify_funding",
+                    "verified": False,
+                    "reason": "The saved case has no recommended fixture candidate to check.",
+                    "safety": {"external_action": "disabled", "payout_guaranteed": False},
+                }
+            funding = _verify_funding({"title": recommendation["title"]})
+            escrow = "verified" if funding.get("escrowed") else "not verified"
+            sponsor = "verified" if funding.get("sponsor_verified") else "not verified"
+            rail = "ready" if funding.get("payout_rail_ready") else "not verified"
+            funding.update(
+                {
+                    "case_found": True,
+                    "intent": "verify_funding",
+                    "request_text_retained": False,
+                    "voice_summary": (
+                        f"Funding signals for {funding['title']}: escrow {escrow}, sponsor {sponsor}, "
+                        f"payout rail {rail}. This does not guarantee payment."
+                    ),
+                }
+            )
+            return funding
+
+        if re.search(r"\b(compare|comparison|alternatives|other options)\b", normalized):
+            focus = "comparison"
+        elif re.search(r"\b(evidence|source|proof|verify|verified|funded|escrow|gap|gaps|why)\b", normalized):
+            focus = "evidence"
+        elif re.search(r"\b(next|steps|should i do|what now)\b", normalized):
+            focus = "next_steps"
+        else:
+            focus = "overview"
+        review = _review_pursuit_case({"case_id": case_id, "focus": focus}, case_store)
+        review.update(
+            {
+                "intent": "review_pursuit_case",
+                "request_text_retained": False,
+                "voice_summary": (
+                    "The saved fixture case could not be reopened; it may have expired or the fixture changed."
+                    if not review.get("case_found")
+                    else f"Here is the saved case {focus.replace('_', ' ')}. Its source is a checked-in fixture, not a live opportunity feed."
+                ),
+            }
+        )
+        return review
+
+    minimum_payout, max_hours, explicit = _request_constraints(request)
+    plan = _plan_pursuit(
+        {"minimum_payout_usd": minimum_payout, "max_hours": max_hours},
+        case_store,
+    )
+    plan["intent"] = "plan_pursuit"
+    plan["request_text_retained"] = False
+    plan["interpreted_constraints"] = {
+        **plan["constraints"],
+        "explicitly_requested": explicit,
+    }
+    plan["voice_summary"] = (
+        f"I used a minimum advertised payout of ${minimum_payout:,.2f} and a maximum of {max_hours:g} hours. "
+        f"{plan['voice_summary']}"
+    )
+    return plan
+
+
 TOOL_DEFINITIONS: list[dict[str, Any]] = [
     {
         "name": "search_rewards",
@@ -420,6 +589,18 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "name": "respond_to_request",
+        "description": "Interpret a short natural-language request locally and route it only to a fixture-backed plan, submission-status summary, or review of a caller-provided case id. It never performs external actions and does not retain prompt text.",
+        "inputSchema": {
+            "type": "object",
+            "required": ["request"],
+            "properties": {
+                "request": {"type": "string", "minLength": 1, "maxLength": 280},
+                "case_id": {"type": "string", "minLength": 32, "maxLength": 32},
+            },
+        },
+    },
 ]
 
 
@@ -459,6 +640,7 @@ def handle_rpc(
             "summarize_submission_status": _submission_status,
             "plan_pursuit": lambda arguments: _plan_pursuit(arguments, case_store),
             "review_pursuit_case": lambda arguments: _review_pursuit_case(arguments, case_store),
+            "respond_to_request": lambda arguments: _respond_to_request(arguments, case_store),
         }
         handler = handlers.get(name)
         if handler is None:

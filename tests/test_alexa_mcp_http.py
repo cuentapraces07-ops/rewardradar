@@ -228,6 +228,38 @@ class AlexaMCPHttpTests(unittest.TestCase):
         self.assertIn("fixture_digest_sha256", value["evidence_card"])
         self.assertIn("verification_gaps", value["evidence_card"])
 
+    def test_natural_request_and_followup_use_the_real_http_tool_boundary(self):
+        planned, _ = self.rpc(
+            {
+                "jsonrpc": "2.0",
+                "id": 30,
+                "method": "tools/call",
+                "params": {
+                    "name": "respond_to_request",
+                    "arguments": {"request": "Find an opportunity above $100 that fits in 40 hours."},
+                },
+            }
+        )
+        result = planned["result"]["structuredContent"]
+        self.assertEqual(result["intent"], "plan_pursuit")
+        case_id = result["casefile"]["case_id"]
+
+        followed_up, _ = self.rpc(
+            {
+                "jsonrpc": "2.0",
+                "id": 31,
+                "method": "tools/call",
+                "params": {
+                    "name": "respond_to_request",
+                    "arguments": {"request": "Compare the alternatives", "case_id": case_id},
+                },
+            }
+        )
+        value = followed_up["result"]["structuredContent"]
+        self.assertTrue(value["case_found"])
+        self.assertEqual(value["focus"], "comparison")
+        self.assertIn("alternatives", value["evidence_card"])
+
 
 if __name__ == "__main__":
     unittest.main()

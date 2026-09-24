@@ -69,6 +69,8 @@ function mp4DurationSeconds(file) {
 
 const readme = read("README.md");
 const server = read("agent/alexa_mcp_server.py");
+const core = read("agent/core.py");
+const fixture = JSON.parse(read("data/demo_candidates.json"));
 const app = read("app/page.tsx");
 const draft = read("docs/AMAZON-SUBMISSION-DRAFT.md");
 const friction = read("docs/AMAZON-FRICTION-LOG.md");
@@ -90,6 +92,7 @@ const expectedTools = [
   "summarize_submission_status",
   "plan_pursuit",
   "review_pursuit_case",
+  "respond_to_request",
 ];
 const exactToolSurface = declaredTools.length === expectedTools.length
   && declaredTools.every((tool, index) => tool === expectedTools[index]);
@@ -108,6 +111,39 @@ check(
     && server.includes("HTTPStatus.METHOD_NOT_ALLOWED")
     && app.includes('Accept: "application/json, text/event-stream"')
     && app.includes('"MCP-Protocol-Version": "2025-11-25"'),
+);
+check(
+  "Alexa+ web simulation accepts a natural-language prompt",
+  app.includes('id="alexa-request"')
+    && app.includes('name: "respond_to_request"')
+    && server.includes('"name": "respond_to_request"'),
+);
+const amazonScenario = fixture.find((row) => row.source === "Amazon Developer Hackathon · Alexa+");
+const namedExpiredRows = fixture.filter((row) =>
+  ["Agents for Humans — Professional Agents", "Steve Agent Arena — highest individual prize"].includes(row.title),
+);
+check(
+  "Amazon cash scenario discloses unmeasured probability and owner gates",
+  amazonScenario?.status === "open"
+    && amazonScenario?.payout_usd === 15000
+    && amazonScenario?.base_probability === 0.01
+    && /illustrative/i.test(amazonScenario?.probability_basis ?? "")
+    && /no empirical/i.test(amazonScenario?.probability_basis ?? "")
+    && /deadline_at/.test(JSON.stringify(amazonScenario)),
+);
+check(
+  "past-deadline historical contests are closed in the fixture",
+  namedExpiredRows.length === 2 && namedExpiredRows.every((row) => row.status === "closed"),
+);
+check(
+  "scoring expires dated candidates and fails closed on invalid deadlines",
+  core.includes('deadline_at.replace("Z", "+00:00")')
+    && core.includes('status="unknown", deadline_days=None'),
+);
+check(
+  "browser candidate expires after its official deadline",
+  app.includes('deadlineAt: "2026-10-23T12:00:00-07:00"')
+    && app.includes("expireByDeadline(item, now)"),
 );
 check("local submission draft remains unsubmitted", /local submission draft/i.test(draft) && /owner-controlled/i.test(readiness));
 check("friction log is local only", /not submitted/i.test(friction) && /up to a 10% bonus/i.test(friction));

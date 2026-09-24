@@ -18,10 +18,13 @@ pnpm dev
 python -m agent.alexa_mcp_server --port 8787
 ```
 
-Open `http://127.0.0.1:5173` and use **Run next MCP tool**. The browser
-performs the MCP initialize/initialized/tools-list/tools-call sequence against
-the local server, then renders the actual structured tool result and session
-identifier. The HTTP server permits browser CORS only from the two local
+Open `http://127.0.0.1:5173`, enter a short request such as
+`Find an opportunity above $100 for 40 hours`, and select
+**Ask RewardRadar**. The browser performs the MCP
+initialize/initialized/tools-list/tools-call sequence against the local
+server, then renders the actual structured result and session identifier.
+Follow-up buttons compare alternatives, show evidence gaps, or reveal next
+steps for the same short-lived case. The HTTP server permits browser CORS only from the two local
 development origins on port 5173; it binds to loopback by default and has no
 credentials or external-data actions. If the endpoint is unavailable, the UI
 shows the connection failure rather than substituting a prerecorded answer.
@@ -35,23 +38,38 @@ POSTs, and allows CORS only from the two local development origins. It
 implements the minimal JSON-RPC surface a client needs:
 
 - `initialize` advertises MCP protocol `2025-11-25` and the server identity.
-- `tools/list` exposes exactly `search_rewards`, `verify_funding`,
-  `summarize_submission_status`, `plan_pursuit`, and `review_pursuit_case`.
-- `tools/call` returns structured JSON plus a text representation suitable for
-  a voice response.
+- `tools/list` exposes `search_rewards`, `verify_funding`,
+  `summarize_submission_status`, `plan_pursuit`, `review_pursuit_case`,
+  and `respond_to_request`.
+- `tools/call` returns structured JSON plus a text summary suitable for the
+  browser's Alexa+ simulation. The browser accepts typed text; it does not
+  provide speech recognition.
 
-The prototype runs against `data/demo_candidates.json` only. It does not read
+The prototype runs against `data/demo_candidates.json` only. Expired contest
+rows are explicitly closed, the prior microtask inventory is snapshot-only,
+and the current Amazon row is still only a checked-in fixture. Its 1% figure
+is an illustrative scenario, not an observed prize probability; the cash
+amount used in the plan is the second-place tier, and the owner's no-meeting
+constraint excludes accepting any award condition that requires a meeting.
+No eligibility or submission is confirmed. It does not read
 AWS credentials, call Amazon devices, send a phone call, bind a wallet, or
 claim that a reward is guaranteed. The response explicitly labels fixture
 replay and separates advertised payout from earned income. A production
 deployment would use HTTPS and a reviewed live-source adapter.
 
-`plan_pursuit` is the agentic conversation layer: it accepts a natural
-constraint such as “show me a reward above $100 that fits in 40 hours,” ranks
-the checked-in evidence, and opens an opaque evidence case with a short voice
-summary plus safe next steps. `review_pursuit_case` can resume that case after
-a new `initialize` or reconnect to the same local server process. It returns a
-structured evidence card for comparison, verification gaps, or next steps.
+The request router is deterministic Python code, not a hosted LLM or
+speech recognizer. It accepts typed text in the web simulation and refuses
+requests to submit, contact, publish, create accounts, or move money. The
+browser sends prompt text only to the local MCP endpoint.
+
+`respond_to_request` deterministically parses a short natural-language request
+and routes it to a fixture-backed pursuit plan, a truthful submission-status
+summary, or a follow-up review. For example, “show me an opportunity above $100 that
+fits in 40 hours” becomes an explicit payout floor and effort ceiling;
+`review_pursuit_case` can compare alternatives, show evidence gaps, or return
+next steps after a new `initialize` or reconnect to the same local server
+process. The prompt text is not stored; the short-lived case retains only
+parsed numeric constraints and public fixture evidence.
 Cases are capped, expire automatically, retain only public fixture-derived
 evidence and numeric constraints, and never write to disk. Both tools are
 deliberately read-only: they carry an explicit `owner_confirmation_required`
@@ -96,6 +114,10 @@ The local contract suite covers loopback `/health`, JSON-RPC
 case expiry, isolation, and a real HTTP reconnect that resumes a case. It does
 not contact Amazon, Devpost, or any payment service.
 
-This is a local build artifact pending owner confirmation for the Amazon
-registration and any later public upload. It is not a claim of Amazon
-endorsement, prize eligibility, or prize receipt.
+The official [Amazon event page](https://amazonappdev2026.devpost.com/) lists
+the Alexa+ track, permits a simulated experience in a web app, and gives an
+October 23, 2026 deadline. This is still only a local build artifact: no
+registration or entry is claimed. The first-place bundle lists a meeting;
+the owner has ruled out meetings, travel, and calls, so no award condition
+requiring one may be accepted. This is not a claim of Amazon endorsement,
+prize eligibility, or prize receipt.

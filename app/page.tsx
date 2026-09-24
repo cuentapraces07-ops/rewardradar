@@ -37,6 +37,7 @@ type Opportunity = {
   confidence: number;
   competition: string;
   deadline: string;
+  deadlineAt?: string;
   verdict: Verdict;
   reason: string;
   url: string;
@@ -50,79 +51,80 @@ const opportunities: Opportunity[] = [
     title: "Build, Ship, Shape: Amazon Developer Hackathon — Alexa+",
     kind: "Hackathon",
     payout: 25000,
-    probability: 5,
+    probability: 1,
     hours: 40,
-    confidence: 90,
-    competition: "High",
-    deadline: "Oct 23",
-    verdict: "pursue",
-    reason: "The official rules list an Alexa+ cash track and the project has a public v0.2 demo plus a local submission packet. Devpost registration and final submission still require owner verification, so this is a plan, not a payout claim.",
+    confidence: 25,
+    competition: "High · overall event",
+    deadline: "Oct 23 · 12 PM PDT",
+    deadlineAt: "2026-10-23T12:00:00-07:00",
+    verdict: "watch",
+    reason: "The official page confirms a $15,000 second-place Alexa+ cash tier and allows a simulated experience in a web app. The 1% figure is only an illustrative planning scenario, not an empirical win probability. Eligibility, final demo, and submission remain unverified; no application was submitted. The 1st-place bundle lists a meeting, excluded by the owner's no-meeting constraint.",
     url: "https://amazonappdev2026.devpost.com/rules",
-    signals: ["$25k Alexa+ track", "Deadline Oct 23", "Public v0.2 demo", "Submission status unverified"],
+    signals: ["$15k second-place cash tier", "Online · simulation allowed", "1% illustrative scenario only", "Eligibility and submission unverified", "No travel or meetings authorized"],
   },
   {
     id: 2,
     source: "Execution Market",
-    title: "Published microtask inventory",
+    title: "Historical: published microtask capture",
     kind: "Agent tasks",
     payout: 1.78,
     probability: 72,
     hours: 2.5,
     confidence: 84,
     competition: "Low",
-    deadline: "Open",
+    deadline: "Snapshot only",
     verdict: "avoid",
-    reason: "Payment rail is concrete, but the entire current inventory is below the $100 objective.",
+    reason: "The historical capture totaled $1.78, below the objective. No live inventory refresh was performed, so this is not presented as a current task list.",
     url: "https://execution.market/",
-    signals: ["26 live tasks at capture", "USDC on-chain rail", "Escrow references", "Insufficient upside"],
+    signals: ["Historical 26-row capture", "$1.78 total at capture", "Current task state unknown", "Below $100 objective"],
   },
   {
     id: 3,
     source: "Opire",
-    title: "Godot issue #70796",
+    title: "Historical: Godot issue #70796",
     kind: "Code bounty",
     payout: 3280,
     probability: 1,
     hours: 45,
     confidence: 64,
-    competition: "10 claimers",
-    deadline: "No deadline",
+    competition: "10 claimers at capture",
+    deadline: "Live state not rechecked",
     verdict: "avoid",
-    reason: "The issue is locked and crowded; the headline value overstates the practical chance of payment.",
+    reason: "The prior capture marked this issue locked and crowded. Its current state is not rechecked, so it is not an active recommendation.",
     url: "https://github.com/godotengine/godot/issues/70796",
-    signals: ["Locked issue", "10 claimers", "Long-running", "No escrow guarantee"],
+    signals: ["Historic locked status", "10 claimers at capture", "Current state unknown", "No escrow guarantee recorded"],
   },
   {
     id: 4,
     source: "Opire",
-    title: "Udio API wrapper issue #7",
+    title: "Historical: Udio API wrapper issue #7",
     kind: "Code bounty",
     payout: 120,
     probability: 3,
     hours: 12,
     confidence: 64,
-    competition: "13 claimers",
-    deadline: "No deadline",
+    competition: "13 claimers at capture",
+    deadline: "Live state not rechecked",
     verdict: "avoid",
-    reason: "Thirteen people are already trying; expected return per hour falls below the guardrail.",
+    reason: "The prior capture recorded 13 attempts. Current competition and source state are unverified, so this is not an active recommendation.",
     url: "https://github.com/flowese/UdioWrapper/issues/7",
-    signals: ["13 claimers", "Small repository", "Unclear acceptance", "No escrow guarantee"],
+    signals: ["13 attempts at capture", "Current state unknown", "Acceptance unclear", "No escrow guarantee recorded"],
   },
   {
     id: 5,
     source: "Algora census",
-    title: "Open GitHub bounty inventory",
+    title: "Historical: GitHub bounty census",
     kind: "Code bounty",
     payout: 0,
     probability: 10,
     hours: 4,
     confidence: 64,
     competition: "Unknown",
-    deadline: "Open",
-    verdict: "watch",
-    reason: "Only one plausibly open item remained after stale and already-awarded labels were removed.",
+    deadline: "Snapshot only",
+    verdict: "avoid",
+    reason: "The old census has no confirmed payout amount or canonical active issue in this row. It cannot be treated as a current reward lead.",
     url: "https://github.com/AsherKasper/bounty-census",
-    signals: ["1 plausible item", "Amount unknown", "Labels are noisy", "Needs sponsor check"],
+    signals: ["Historical census", "Amount unknown", "No current issue URL", "No sponsor check"],
   },
   {
     id: 6,
@@ -134,32 +136,57 @@ const opportunities: Opportunity[] = [
     hours: 12,
     confidence: 74,
     competition: "10 submissions",
-    deadline: "Sep 19*",
+    deadline: "Expired · Sep 19",
     verdict: "avoid",
-    reason: "The listing is open and agent-eligible, but payout is sponsor-direct, the sponsor is not marked verified, and qualification requires capital at risk plus a public X post.",
+    reason: "The recorded Sep 19 deadline has passed. Do not treat this snapshot as claimable. Its historical terms also required capital at risk and a public X post.",
     url: "https://superteam.fun/earn/listing/steve-agent-arena-launch-your-agent-and-win-500-usdc",
-    signals: ["Sponsor not verified", "5 mainnet trades + public X", "Agents explicitly allowed", "$100 third-place floor"],
+    signals: ["Expired deadline", "Historic fixture only", "No current claim action", "Sponsor payout was not guaranteed"],
   },
 ];
 
 const agents = [
-  { name: "Scout", icon: Radar, text: "Finds reward inventory", status: "Sep 10 capture" },
+  { name: "Scout", icon: Radar, text: "Finds reward inventory", status: "Amazon source · Sep 24" },
   { name: "Verifier", icon: ShieldCheck, text: "Checks the source of truth", status: "Recorded checks" },
   { name: "Risk", icon: AlertTriangle, text: "Flags manipulation & friction", status: "Social + capital gates" },
-  { name: "ROI", icon: TrendingUp, text: "Ranks expected value", status: "1 pursue" },
+  { name: "ROI", icon: TrendingUp, text: "Ranks scenario value", status: "1 watch · 0 submitted" },
 ];
-
-type AlexaTurn = {
-  prompt: string;
-  tool: string;
-  arguments: Record<string, unknown>;
-};
 
 type AlexaRun = {
   prompt: string;
   tool: string;
   sessionId: string;
-  result: Record<string, unknown>;
+  result: AlexaEvidence;
+};
+
+type AlexaEvidence = {
+  intent?: string;
+  voice_summary?: string;
+  mode?: string;
+  request_supported?: boolean;
+  request_text_retained?: boolean;
+  constraints?: { minimum_payout_usd?: number; max_hours?: number };
+  interpreted_constraints?: {
+    minimum_payout_usd?: number;
+    max_hours?: number;
+    explicitly_requested?: { minimum_payout_usd?: boolean; max_hours?: boolean };
+  };
+  recommendation?: {
+    title?: string;
+    advertised_payout_usd?: number;
+    expected_value_usd?: number;
+    verdict?: string;
+  } | null;
+  casefile?: { case_id?: string };
+  case_found?: boolean;
+  focus?: string;
+  verified?: boolean;
+  escrowed?: boolean;
+  sponsor_verified?: boolean;
+  payout_rail_ready?: boolean;
+  evidence_card?: Record<string, unknown>;
+  reason?: string;
+  safety?: { external_action?: string; payout_guaranteed?: boolean };
+  disclosure?: string;
 };
 
 type MCPResponse = {
@@ -173,28 +200,7 @@ type MCPResponse = {
 
 const MCP_ENDPOINT = "http://127.0.0.1:8787/mcp";
 
-const alexaTurns: AlexaTurn[] = [
-  {
-    prompt: "Which opportunity is worth my next two hours?",
-    tool: "search_rewards",
-    arguments: { query: "", limit: 3 },
-  },
-  {
-    prompt: "Is that money actually funded?",
-    tool: "verify_funding",
-    arguments: { title: "Agents for Humans — Professional Agents" },
-  },
-  {
-    prompt: "Has my Alexa+ project been submitted?",
-    tool: "summarize_submission_status",
-    arguments: { track: "Alexa+" },
-  },
-  {
-    prompt: "Plan a $100-plus opportunity I can finish in 40 hours.",
-    tool: "plan_pursuit",
-    arguments: { minimum_payout_usd: 100, max_hours: 40 },
-  },
-];
+const DEFAULT_ALEXA_PROMPT = "Find a $100+ opportunity I can finish within 40 hours.";
 
 async function mcpPost(payload: Record<string, unknown>, sessionId?: string) {
   const headers: Record<string, string> = {
@@ -215,7 +221,7 @@ async function mcpPost(payload: Record<string, unknown>, sessionId?: string) {
   return response;
 }
 
-async function callAlexaTool(turn: AlexaTurn): Promise<AlexaRun> {
+async function callAlexaTool(prompt: string, caseId?: string): Promise<AlexaRun> {
   const initializedResponse = await mcpPost({
     jsonrpc: "2.0",
     id: 1,
@@ -243,15 +249,18 @@ async function callAlexaTool(turn: AlexaTurn): Promise<AlexaRun> {
     sessionId,
   );
   const toolList: MCPResponse = await toolListResponse.json();
-  const supported = toolList?.result?.tools?.some((entry: { name?: string }) => entry.name === turn.tool);
-  if (!supported) throw new Error(`The local MCP server does not advertise ${turn.tool}`);
+  const supported = toolList?.result?.tools?.some((entry: { name?: string }) => entry.name === "respond_to_request");
+  if (!supported) throw new Error("The local MCP server does not advertise respond_to_request");
+
+  const arguments_: Record<string, string> = { request: prompt };
+  if (caseId) arguments_.case_id = caseId;
 
   const toolResponse = await mcpPost(
     {
       jsonrpc: "2.0",
       id: 3,
       method: "tools/call",
-      params: { name: turn.tool, arguments: turn.arguments },
+      params: { name: "respond_to_request", arguments: arguments_ },
     },
     sessionId,
   );
@@ -259,7 +268,7 @@ async function callAlexaTool(turn: AlexaTurn): Promise<AlexaRun> {
   if (toolPayload?.error) throw new Error(toolPayload.error.message ?? "The local MCP tool call failed");
   const result = toolPayload?.result?.structuredContent;
   if (!result || typeof result !== "object") throw new Error("The local MCP tool returned no structured result");
-  return { prompt: turn.prompt, tool: turn.tool, sessionId, result };
+  return { prompt, tool: "respond_to_request", sessionId, result: result as AlexaEvidence };
 }
 
 const verdictStyles: Record<Verdict, string> = {
@@ -280,20 +289,45 @@ function expectedValue(item: Opportunity) {
   return item.payout * (item.probability / 100);
 }
 
+function hasExpiredDeadline(item: Opportunity, now: number): boolean {
+  if (!item.deadlineAt) return false;
+  const deadline = Date.parse(item.deadlineAt);
+  return !Number.isFinite(deadline) || deadline <= now;
+}
+
+function expireByDeadline(item: Opportunity, now: number): Opportunity {
+  if (hasExpiredDeadline(item, now)) {
+    return {
+      ...item,
+      deadline: "Expired",
+      verdict: "avoid",
+      reason: "The cached event deadline has passed or could not be parsed. Do not treat this fixture as a current opportunity.",
+    };
+  }
+  return item;
+}
+
 export default function Home() {
   const [selectedId, setSelectedId] = useState(1);
   const [filter, setFilter] = useState<"all" | Verdict>("all");
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(100);
-  const [alexaTurn, setAlexaTurn] = useState(0);
   const [alexaRunning, setAlexaRunning] = useState(false);
   const [alexaResult, setAlexaResult] = useState<AlexaRun | null>(null);
   const [alexaError, setAlexaError] = useState("");
+  const [alexaPrompt, setAlexaPrompt] = useState(DEFAULT_ALEXA_PROMPT);
+  const [alexaCaseId, setAlexaCaseId] = useState<string | undefined>();
+  const [now, setNow] = useState(0);
 
-  const selected = opportunities.find((item) => item.id === selectedId) ?? opportunities[0];
+  const currentOpportunities = useMemo(
+    () => (now ? opportunities.map((item) => expireByDeadline(item, now)) : opportunities),
+    [now],
+  );
+  const selected = currentOpportunities.find((item) => item.id === selectedId) ?? currentOpportunities[0];
+  const amazonScenario = currentOpportunities.find((item) => item.id === 1);
   const visible = useMemo(
-    () => opportunities.filter((item) => filter === "all" || item.verdict === filter),
-    [filter],
+    () => currentOpportunities.filter((item) => filter === "all" || item.verdict === filter),
+    [currentOpportunities, filter],
   );
 
   const startReplay = () => {
@@ -301,14 +335,20 @@ export default function Home() {
     setRunning(true);
   };
 
-  const runAlexaDemoTurn = async () => {
+  const runAlexaDemoTurn = async (prompt = alexaPrompt) => {
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt) {
+      setAlexaError("Enter a request first");
+      return;
+    }
     if (alexaRunning) return;
     setAlexaRunning(true);
     setAlexaError("");
     try {
-      const run = await callAlexaTool(alexaTurns[alexaTurn]);
+      const run = await callAlexaTool(trimmedPrompt, alexaCaseId);
       setAlexaResult(run);
-      setAlexaTurn((current) => (current + 1) % alexaTurns.length);
+      const nextCaseId = run.result.casefile?.case_id;
+      if (nextCaseId) setAlexaCaseId(nextCaseId);
     } catch (error) {
       setAlexaError(error instanceof Error ? error.message : "The local MCP request failed");
       setAlexaResult(null);
@@ -316,6 +356,13 @@ export default function Home() {
       setAlexaRunning(false);
     }
   };
+
+  useEffect(() => {
+    const updateNow = () => setNow(Date.now());
+    updateNow();
+    const timer = window.setInterval(updateNow, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!running) return;
@@ -371,14 +418,14 @@ export default function Home() {
             <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full border-[38px] border-[#1d4038]" />
             <div className="relative max-w-3xl">
               <div className="mb-7 flex flex-wrap items-center gap-3">
-                <span className="border border-[#6f8a83] bg-[#1d4038] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#cde8df]">Evidence snapshot · Sep 10, 2026</span>
-                <span className="text-xs text-[#b9ccc6]">Static snapshot · no live refresh</span>
+                <span className="border border-[#6f8a83] bg-[#1d4038] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#cde8df]">Amazon source check · Sep 24, 2026</span>
+                <span className="text-xs text-[#b9ccc6]">Other opportunities are historical fixtures · no live refresh</span>
               </div>
               <h1 className="font-display text-[clamp(2.25rem,5vw,5rem)] font-black leading-[.91] tracking-[-0.055em]">
                 Don’t chase the<br /><span className="text-[#ff7a45]">headline payout.</span>
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-7 text-[#c8d8d3] md:text-lg">
-                Four cooperating agents separate payable opportunities from stale issues, manipulated totals and expensive dead ends—then rank the work by expected return.
+                Four cooperating agents separate active source evidence from stale listings, risky payout claims and expensive dead ends—then rank work with disclosed planning scenarios.
               </p>
             </div>
           </div>
@@ -393,16 +440,16 @@ export default function Home() {
             </div>
             <div className="mt-7 border-y border-[#ded9cf] py-5">
               <div className="flex items-end justify-between">
-                <span className="text-sm font-semibold text-[#59655f]">Best qualified upside</span>
-                <span className="font-mono text-3xl font-bold">$25,000</span>
+                <span className="text-sm font-semibold text-[#59655f]">Cash tier analyzed · second place</span>
+                <span className="font-mono text-3xl font-bold">$15,000</span>
               </div>
               <div className="mt-3 border-l-4 border-[#ff5d24] bg-[#f2efe8] px-3 py-2 text-[11px] font-semibold text-[#59655f]">
-                2 UPDATE GATES REMAIN: VIMEO · DEVPOST
+                {amazonScenario && hasExpiredDeadline(amazonScenario, now) ? "EXPIRED · DO NOT SUBMIT" : "LOCAL WATCH ONLY · ELIGIBILITY AND SUBMISSION NOT VERIFIED"}
               </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="bg-[#edf5ef] p-4"><p className="label">Track prize</p><p className="mt-2 font-mono text-xl font-bold">$25,000</p></div>
-              <div className="bg-[#fff0e8] p-4"><p className="label">Deadline</p><p className="mt-2 font-mono text-xl font-bold">OCT 23</p></div>
+              <div className="bg-[#edf5ef] p-4"><p className="label">Analyzed cash tier</p><p className="mt-2 font-mono text-xl font-bold">$15,000</p></div>
+              <div className="bg-[#fff0e8] p-4"><p className="label">Deadline</p><p className="mt-2 font-mono text-xl font-bold">{amazonScenario?.deadline ?? "Unknown"}</p></div>
             </div>
           </aside>
         </section>
@@ -411,7 +458,7 @@ export default function Home() {
           {[
             ["Opire advertised", "30", "$518K displayed total", CircleDollarSign],
             ["Canonical open", "8", "22 eliminated", ShieldCheck],
-            ["Agent-eligible", "1", "Superteam · 10 submissions", Target],
+            ["Eligible track", "1*", "Alexa+ simulation · owner checks pending", Target],
             ["Microtask inventory", "$1.78", "Execution · 26 rows", Zap],
           ].map(([label, value, note, Icon], index) => {
             const MetricIcon = Icon as typeof CircleDollarSign;
@@ -449,18 +496,60 @@ export default function Home() {
           <div>
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.15em] text-[#ff5d24]"><Bot size={16} />Alexa+ simulated experience</div>
             <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.035em]">Ask once. Hear the evidence.</h2>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-[#65716b]">This local replay shows how an Alexa+-style client calls RewardRadar’s self-hosted MCP endpoint. The response never turns an advertised amount into a promised payout.</p>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-[#65716b]">Ask in your own words. A deterministic local router calls RewardRadar’s self-hosted MCP endpoint and can follow up on the same evidence case. It never turns an advertised amount into a promised payout.</p>
             <div className="mt-5 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[.12em] text-[#69736e]"><span className="flex items-center gap-1 border border-[#d5d0c7] bg-[#f2efe8] px-2 py-1"><Server size={13} /> POST /mcp</span><span className="border border-[#d5d0c7] bg-[#f2efe8] px-2 py-1">MCP 2025-11-25</span><span className="border border-[#a8dfb5] bg-[#edf8ef] px-2 py-1 text-[#12622f]">Fixture only</span></div>
-            <button type="button" onClick={runAlexaDemoTurn} disabled={alexaRunning} className="mt-6 flex items-center gap-2 border border-[#18211f] bg-[#18211f] px-4 py-2.5 text-xs font-bold text-white shadow-[3px_3px_0_#ff5d24] transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"><Sparkles size={14} />{alexaRunning ? "Calling local MCP…" : "Run next MCP tool"}</button>
-            <p className="mt-2 text-[10px] font-medium text-[#69736e]">Requires the local demo servers on ports 5173 and 8787. No cloud account or credentials.</p>
+            <form className="mt-5" onSubmit={(event) => { event.preventDefault(); void runAlexaDemoTurn(); }}>
+              <label htmlFor="alexa-request" className="mb-2 block text-[10px] font-bold uppercase tracking-[.12em] text-[#69736e]">Your request · up to 280 characters</label>
+              <textarea id="alexa-request" value={alexaPrompt} onChange={(event) => setAlexaPrompt(event.target.value)} maxLength={280} rows={2} placeholder="Example: find an opportunity above $100 I can finish in 40 hours" className="w-full resize-y border border-[#d5d0c7] bg-white px-3 py-2 text-sm text-[#18211f] outline-none focus:border-[#ff5d24] focus:ring-2 focus:ring-[#ff5d24]/30" />
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <button type="submit" disabled={alexaRunning || !alexaPrompt.trim()} className="flex items-center gap-2 border border-[#18211f] bg-[#18211f] px-4 py-2.5 text-xs font-bold text-white shadow-[3px_3px_0_#ff5d24] transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"><Sparkles size={14} />{alexaRunning ? "Calling local MCP…" : "Ask RewardRadar"}</button>
+                {alexaCaseId && <>
+                  <button type="button" disabled={alexaRunning} onClick={() => { setAlexaPrompt("Check whether the funding is escrowed or sponsor-verified."); void runAlexaDemoTurn("Check whether the funding is escrowed or sponsor-verified."); }} className="border border-[#d5d0c7] bg-[#f2efe8] px-3 py-2 text-[10px] font-bold text-[#59655f] hover:bg-white disabled:opacity-50">Check funding</button>
+                  <button type="button" disabled={alexaRunning} onClick={() => { setAlexaPrompt("Compare the alternatives."); void runAlexaDemoTurn("Compare the alternatives."); }} className="border border-[#d5d0c7] bg-[#f2efe8] px-3 py-2 text-[10px] font-bold text-[#59655f] hover:bg-white disabled:opacity-50">Compare options</button>
+                  <button type="button" disabled={alexaRunning} onClick={() => { setAlexaPrompt("What evidence is missing?"); void runAlexaDemoTurn("What evidence is missing?"); }} className="border border-[#d5d0c7] bg-[#f2efe8] px-3 py-2 text-[10px] font-bold text-[#59655f] hover:bg-white disabled:opacity-50">Evidence gaps</button>
+                  <button type="button" disabled={alexaRunning} onClick={() => { setAlexaPrompt("What should I do next?"); void runAlexaDemoTurn("What should I do next?"); }} className="border border-[#d5d0c7] bg-[#f2efe8] px-3 py-2 text-[10px] font-bold text-[#59655f] hover:bg-white disabled:opacity-50">Next steps</button>
+                </>}
+              </div>
+            </form>
+            <p className="mt-2 text-[10px] font-medium text-[#69736e]">Request text is sent only to the local MCP server. The case stores parsed limits and fixture evidence in memory for 15 minutes; raw prompt text is not retained. No cloud model, account, or credential is used.</p>
             {alexaError && <p role="alert" className="mt-3 border border-[#efb1a8] bg-[#fff0ed] p-3 text-xs font-semibold text-[#972c22]">{alexaError}. Start <code>python -m agent.alexa_mcp_server</code> in a second terminal, then retry.</p>}
             <figure className="mt-6 border border-[#d5d0c7] bg-[#f2efe8] p-3"><video className="aspect-video w-full bg-[#18211f]" controls preload="metadata" aria-label="RewardRadar Alexa Plus demonstration video"><source src="media/AlexaPlus-demo-v0.2.mp4" type="video/mp4" />Your browser does not support the demo video.</video><figcaption className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-[.1em] text-[#69736e]"><span>94.89 s · male narration</span><span>local fixture · no payout claim</span></figcaption></figure>
           </div>
           <div className="border border-[#d5d0c7] bg-[#132c27] p-4 text-white md:p-5">
             <div className="flex items-center justify-between border-b border-[#355149] pb-3"><span className="text-[10px] font-bold uppercase tracking-[.14em] text-[#9db0aa]">Alexa+ tool demo · live local call</span><span className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] ${alexaResult ? "text-[#66d184]" : "text-[#e8bf68]"}`}><span className={`h-2 w-2 rounded-full ${alexaResult ? "bg-[#66d184]" : "bg-[#e8bf68]"}`} />{alexaResult ? "MCP tool response" : "Waiting for local MCP"}</span></div>
-            <div className="mt-4 flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#ff5d24] text-white"><Bot size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#ff9a73]">Alexa+</p><p className="mt-1 text-sm font-semibold leading-6 text-[#f8f6f1]">“{alexaResult?.prompt ?? alexaTurns[alexaTurn].prompt}”</p></div></div>
-            <div className="my-4 ml-11 border-l-2 border-[#ff5d24] pl-3"><p className="font-mono text-[10px] font-bold uppercase tracking-[.1em] text-[#ff9a73]">tool · {alexaResult?.tool ?? alexaTurns[alexaTurn].tool}</p></div>
-            <div className="flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#1d4038] text-[#cde8df]"><ShieldCheck size={16} /></div><div className="min-w-0 flex-1"><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#9db0aa]">Actual local server result</p>{alexaResult ? <><p className="mt-1 text-sm font-semibold leading-6 text-[#c8d8d3]">Tool call succeeded: {alexaResult.tool}</p><p className="mt-1 font-mono text-[10px] text-[#8fa39d]">MCP session · {alexaResult.sessionId}</p><pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words border border-[#355149] bg-[#0d211d] p-3 font-mono text-[10px] leading-5 text-[#d3e1dc]">{JSON.stringify(alexaResult.result, null, 2)}</pre></> : <p className="mt-1 text-sm leading-6 text-[#c8d8d3]">No tool call has run yet. Start the two local demo servers and click “Run next MCP tool” to see the real response.</p>}</div></div>
+            <div className="mt-4 flex gap-3">
+              <div className="grid h-8 w-8 shrink-0 place-items-center bg-[#ff5d24] text-white"><Bot size={16} /></div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#ff9a73]">Alexa+ simulation</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-[#f8f6f1]">“{alexaResult?.prompt ?? DEFAULT_ALEXA_PROMPT}”</p>
+              </div>
+            </div>
+            <div className="my-4 ml-11 border-l-2 border-[#ff5d24] pl-3">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-[.1em] text-[#ff9a73]">tool · {alexaResult?.tool ?? "respond_to_request"}</p>
+            </div>
+            <div className="flex gap-3">
+              <div className="grid h-8 w-8 shrink-0 place-items-center bg-[#1d4038] text-[#cde8df]"><ShieldCheck size={16} /></div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#9db0aa]">Actual local server result</p>
+                {alexaResult ? (
+                  <>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-[#c8d8d3]">
+                      {alexaResult.result.voice_summary ?? (alexaResult.result.request_supported === false ? alexaResult.result.reason : "The local server returned a structured result.")}
+                    </p>
+                    {alexaResult.result.constraints && <p className="mt-2 font-mono text-[10px] text-[#8fa39d]">Minimum advertised payout: USD {alexaResult.result.constraints.minimum_payout_usd ?? "—"} · maximum effort: {alexaResult.result.constraints.max_hours ?? "—"}h</p>}
+                    {alexaResult.result.recommendation && <div className="mt-3 border border-[#355149] bg-[#0d211d] p-3">
+                      <p className="text-xs font-bold text-[#f8f6f1]">{alexaResult.result.recommendation.title}</p>
+                      <p className="mt-1 font-mono text-[10px] text-[#c8d8d3]">Advertised {typeof alexaResult.result.recommendation.advertised_payout_usd === "number" ? money(alexaResult.result.recommendation.advertised_payout_usd) : "unavailable"} · scenario value {typeof alexaResult.result.recommendation.expected_value_usd === "number" ? money(alexaResult.result.recommendation.expected_value_usd) : "unavailable"} · not a forecast or guaranteed income</p>
+                    </div>}
+                    <p className="mt-2 font-mono text-[10px] text-[#8fa39d]">MCP session · {alexaResult.sessionId} · {alexaResult.result.intent ?? "read-only fixture response"}</p>
+                    <details className="mt-3 border border-[#355149] bg-[#0d211d] p-3">
+                      <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-[.1em] text-[#9db0aa]">Inspect structured evidence</summary>
+                      <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] leading-5 text-[#d3e1dc]">{JSON.stringify(alexaResult.result, null, 2)}</pre>
+                    </details>
+                  </>
+                ) : <p className="mt-1 text-sm leading-6 text-[#c8d8d3]">Start the local demo servers, enter a request, and ask RewardRadar to inspect the checked-in fixture.</p>}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -478,7 +567,7 @@ export default function Home() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] border-collapse text-left">
                 <thead className="bg-[#efebe3] text-[10px] uppercase tracking-[0.13em] text-[#69736e]">
-                  <tr><th className="px-5 py-3">Opportunity</th><th className="px-4 py-3">Payout</th><th className="px-4 py-3">Planning P(pay)</th><th className="px-4 py-3">Expected</th><th className="px-4 py-3">Effort</th><th className="px-4 py-3">Verdict</th><th className="w-10" /></tr>
+                  <tr><th className="px-5 py-3">Opportunity</th><th className="px-4 py-3">Advertised cash tier</th><th className="px-4 py-3">Scenario input</th><th className="px-4 py-3">Scenario value</th><th className="px-4 py-3">Effort</th><th className="px-4 py-3">Verdict</th><th className="w-10" /></tr>
                 </thead>
                 <tbody>
                   {visible.map((item) => (
@@ -520,7 +609,7 @@ export default function Home() {
         </section>
 
         <footer className="flex flex-col gap-3 py-8 text-xs text-[#66716b] md:flex-row md:items-center md:justify-between">
-          <p>RewardRadar makes recommendations—not payment guarantees. Source links remain visible; probabilities are disclosed planning assumptions.</p>
+          <p>RewardRadar makes recommendations—not payment guarantees. Percentages are scenario inputs, not empirical win rates; non-Amazon rows are historical fixtures, not active leads.</p>
           <div className="flex items-center gap-4 font-mono"><span className="flex items-center gap-1"><Code2 size={13} />MIT</span><span className="flex items-center gap-1"><Clock3 size={13} />Audit v0.2.0</span></div>
         </footer>
       </div>
