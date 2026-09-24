@@ -69,6 +69,7 @@ function mp4DurationSeconds(file) {
 
 const readme = read("README.md");
 const server = read("agent/alexa_mcp_server.py");
+const app = read("app/page.tsx");
 const draft = read("docs/AMAZON-SUBMISSION-DRAFT.md");
 const friction = read("docs/AMAZON-FRICTION-LOG.md");
 const fieldMap = read("docs/AMAZON-FIELD-MAP.md");
@@ -99,6 +100,14 @@ check(
   "MCP protocol and exact read-only tool surface",
   server.includes("2025-11-25") && exactToolSurface,
   `declared tools: ${declaredTools.join(", ") || "none"}`,
+);
+check(
+  "MCP Streamable HTTP request and origin safeguards",
+  server.includes("def _reject_invalid_origin")
+    && server.includes("HTTPStatus.FORBIDDEN")
+    && server.includes("HTTPStatus.METHOD_NOT_ALLOWED")
+    && app.includes('Accept: "application/json, text/event-stream"')
+    && app.includes('"MCP-Protocol-Version": "2025-11-25"'),
 );
 check("local submission draft remains unsubmitted", /local submission draft/i.test(draft) && /owner-controlled/i.test(readiness));
 check("friction log is local only", /not submitted/i.test(friction) && /up to a 10% bonus/i.test(friction));

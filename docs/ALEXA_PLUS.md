@@ -8,8 +8,31 @@ by the dashboard, while keeping the demo safe and reproducible:
 python -m agent.alexa_mcp_server --port 8787
 ```
 
-The endpoint is `POST http://127.0.0.1:8787/mcp`; `GET /health` returns a
-readiness check. It implements the minimal JSON-RPC surface a client needs:
+For the browser simulation, run the two local processes in separate terminals:
+
+```bash
+# terminal 1, from the repository root
+pnpm dev
+
+# terminal 2, from the repository root
+python -m agent.alexa_mcp_server --port 8787
+```
+
+Open `http://127.0.0.1:5173` and use **Run next MCP tool**. The browser
+performs the MCP initialize/initialized/tools-list/tools-call sequence against
+the local server, then renders the actual structured tool result and session
+identifier. The HTTP server permits browser CORS only from the two local
+development origins on port 5173; it binds to loopback by default and has no
+credentials or external-data actions. If the endpoint is unavailable, the UI
+shows the connection failure rather than substituting a prerecorded answer.
+
+The MCP endpoint is `http://127.0.0.1:8787/mcp`; `GET /health` returns a
+readiness check and `GET /mcp` returns `405 Method Not Allowed` because the
+prototype does not offer an SSE stream. The browser client lists both JSON and
+SSE in `Accept` and sends `MCP-Protocol-Version: 2025-11-25` on its requests.
+The server rejects disallowed `Origin` values with `403`, including direct
+POSTs, and allows CORS only from the two local development origins. It
+implements the minimal JSON-RPC surface a client needs:
 
 - `initialize` advertises MCP protocol `2025-11-25` and the server identity.
 - `tools/list` exposes exactly `search_rewards`, `verify_funding`,

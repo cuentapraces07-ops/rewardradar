@@ -474,6 +474,30 @@ class MCPHandler(BaseHTTPRequestHandler):
     # Keep the HTTP response identity synchronized with the MCP initialize
     # identity so a local judge does not observe two incompatible versions.
     server_version = f"RewardRadarMCP/{SERVER_INFO['version']}"
+    allowed_origins = {
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+    }
+
+    def _reject_invalid_origin(self) -> bool:
+        origin = self.headers.get("Origin")
+        if origin is not None and origin not in self.allowed_origins:
+            if self.command == "POST":
+                try:
+                    length = int(self.headers.get("Content-Length", "0"))
+                except ValueError:
+                    length = -1
+                if 0 <= length <= 1024 * 1024:
+                    self.rfile.read(length)
+                else:
+                    self.close_connection = True
+            self._send_json({"error": "Origin is not allowed"}, HTTPStatus.FORBIDDEN)
+            return True
+        return False
+
+    def _cors_origin(self) -> str | None:
+        origin = self.headers.get("Origin")
+        return origin if origin in self.allowed_origins else None
 
     def _send_json(self, payload: dict[str, Any], status: int = HTTPStatus.OK) -> None:
         body = json.dumps(payload, sort_keys=True).encode("utf-8")
@@ -481,16 +505,44 @@ class MCPHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Mcp-Session-Id", self.server.session_id)
+        origin = self._cors_origin()
+        if origin:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Access-Control-Expose-Headers", "Mcp-Session-Id, Server")
+            self.send_header("Vary", "Origin")
         self.end_headers()
         self.wfile.write(body)
 
+    def do_OPTIONS(self) -> None:  # noqa: N802
+        if self.path != "/mcp":
+            self._send_json({"error": "MCP endpoint is /mcp"}, HTTPStatus.NOT_FOUND)
+            return
+        origin = self._cors_origin()
+        if origin is None:
+            self._send_json({"error": "Origin is not allowed"}, HTTPStatus.FORBIDDEN)
+            return
+        self.send_response(HTTPStatus.NO_CONTENT)
+        self.send_header("Access-Control-Allow-Origin", origin)
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Accept, Content-Type, Mcp-Session-Id, MCP-Protocol-Version")
+        self.send_header("Access-Control-Max-Age", "300")
+        self.send_header("Vary", "Origin")
+        self.end_headers()
+
     def do_GET(self) -> None:  # noqa: N802
+        if self._reject_invalid_origin():
+            return
+        if self.path == "/mcp":
+            self._send_json({"error": "This MCP server does not offer an SSE stream"}, HTTPStatus.METHOD_NOT_ALLOWED)
+            return
         if self.path != "/health":
             self._send_json({"error": "Use POST /mcp"}, HTTPStatus.NOT_FOUND)
             return
         self._send_json({"ok": True, "server": SERVER_INFO, "mode": "fixture"})
 
     def do_POST(self) -> None:  # noqa: N802
+        if self._reject_invalid_origin():
+            return
         if self.path != "/mcp":
             self._send_json({"error": "MCP endpoint is /mcp"}, HTTPStatus.NOT_FOUND)
             return
@@ -507,6 +559,11 @@ class MCPHandler(BaseHTTPRequestHandler):
         if response is None:
             self.send_response(HTTPStatus.ACCEPTED)
             self.send_header("Mcp-Session-Id", self.server.session_id)
+            origin = self._cors_origin()
+            if origin:
+                self.send_header("Access-Control-Allow-Origin", origin)
+                self.send_header("Access-Control-Expose-Headers", "Mcp-Session-Id, Server")
+                self.send_header("Vary", "Origin")
             self.end_headers()
             return
         self._send_json(response)

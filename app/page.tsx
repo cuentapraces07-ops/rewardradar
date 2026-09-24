@@ -149,32 +149,118 @@ const agents = [
   { name: "ROI", icon: TrendingUp, text: "Ranks expected value", status: "1 pursue" },
 ];
 
-const alexaTurns = [
+type AlexaTurn = {
+  prompt: string;
+  tool: string;
+  arguments: Record<string, unknown>;
+};
+
+type AlexaRun = {
+  prompt: string;
+  tool: string;
+  sessionId: string;
+  result: Record<string, unknown>;
+};
+
+type MCPResponse = {
+  result?: {
+    protocolVersion?: string;
+    tools?: Array<{ name?: string }>;
+    structuredContent?: Record<string, unknown>;
+  };
+  error?: { message?: string };
+};
+
+const MCP_ENDPOINT = "http://127.0.0.1:8787/mcp";
+
+const alexaTurns: AlexaTurn[] = [
   {
     prompt: "Which opportunity is worth my next two hours?",
     tool: "search_rewards",
-    response: "The strongest match has the best payment-adjusted hourly return. I checked source state, competition, and payment signals before recommending it.",
-    evidence: "fixture replay · ranking by expected hourly value",
+    arguments: { query: "", limit: 3 },
   },
   {
     prompt: "Is that money actually funded?",
     tool: "verify_funding",
-    response: "I will not treat it as income. The evidence separates escrow, verified sponsor, and payout rail; if a signal is missing, I say so.",
-    evidence: "escrow + sponsor + payout rail · no guarantees",
+    arguments: { title: "Agents for Humans — Professional Agents" },
   },
   {
     prompt: "Has my Alexa+ project been submitted?",
     tool: "summarize_submission_status",
-    response: "The public v0.2 demo is live and the local submission packet is ready. Devpost registration and final submission still need owner verification; no payout has been awarded.",
-    evidence: "Submission status unverified · v0.2 public · payout not awarded",
+    arguments: { track: "Alexa+" },
   },
   {
     prompt: "Plan a $100-plus opportunity I can finish in 40 hours.",
     tool: "plan_pursuit",
-    response: "I can prepare a bounded pursuit brief, but I will not submit work, contact a sponsor, spend money, or claim a payout without the owner's confirmation.",
-    evidence: "minimum_payout_usd: 100 · max_hours: 40 · read-only plan",
+    arguments: { minimum_payout_usd: 100, max_hours: 40 },
   },
 ];
+
+async function mcpPost(payload: Record<string, unknown>, sessionId?: string) {
+  const headers: Record<string, string> = {
+    Accept: "application/json, text/event-stream",
+    "Content-Type": "application/json",
+    "MCP-Protocol-Version": "2025-11-25",
+  };
+  if (sessionId) headers["Mcp-Session-Id"] = sessionId;
+  const response = await fetch(MCP_ENDPOINT, {
+    method: "POST",
+    mode: "cors",
+    credentials: "omit",
+    cache: "no-store",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) throw new Error(`Local MCP returned HTTP ${response.status}`);
+  return response;
+}
+
+async function callAlexaTool(turn: AlexaTurn): Promise<AlexaRun> {
+  const initializedResponse = await mcpPost({
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {
+      protocolVersion: "2025-11-25",
+      capabilities: {},
+      clientInfo: { name: "rewardradar-browser-demo", version: "0.2.1" },
+    },
+  });
+  const initialized: MCPResponse = await initializedResponse.json();
+  const sessionId = initializedResponse.headers.get("Mcp-Session-Id");
+  if (!sessionId || initialized?.result?.protocolVersion !== "2025-11-25") {
+    throw new Error("The local MCP server did not complete the expected protocol handshake");
+  }
+
+  const notification = await mcpPost(
+    { jsonrpc: "2.0", method: "notifications/initialized" },
+    sessionId,
+  );
+  if (notification.status !== 202) throw new Error("The local MCP server did not accept initialization");
+
+  const toolListResponse = await mcpPost(
+    { jsonrpc: "2.0", id: 2, method: "tools/list" },
+    sessionId,
+  );
+  const toolList: MCPResponse = await toolListResponse.json();
+  const supported = toolList?.result?.tools?.some((entry: { name?: string }) => entry.name === turn.tool);
+  if (!supported) throw new Error(`The local MCP server does not advertise ${turn.tool}`);
+
+  const toolResponse = await mcpPost(
+    {
+      jsonrpc: "2.0",
+      id: 3,
+      method: "tools/call",
+      params: { name: turn.tool, arguments: turn.arguments },
+    },
+    sessionId,
+  );
+  const toolPayload: MCPResponse = await toolResponse.json();
+  if (toolPayload?.error) throw new Error(toolPayload.error.message ?? "The local MCP tool call failed");
+  const result = toolPayload?.result?.structuredContent;
+  if (!result || typeof result !== "object") throw new Error("The local MCP tool returned no structured result");
+  return { prompt: turn.prompt, tool: turn.tool, sessionId, result };
+}
 
 const verdictStyles: Record<Verdict, string> = {
   pursue: "bg-[#d8f6df] text-[#12622f] border-[#a8dfb5]",
@@ -200,6 +286,9 @@ export default function Home() {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(100);
   const [alexaTurn, setAlexaTurn] = useState(0);
+  const [alexaRunning, setAlexaRunning] = useState(false);
+  const [alexaResult, setAlexaResult] = useState<AlexaRun | null>(null);
+  const [alexaError, setAlexaError] = useState("");
 
   const selected = opportunities.find((item) => item.id === selectedId) ?? opportunities[0];
   const visible = useMemo(
@@ -210,6 +299,22 @@ export default function Home() {
   const startReplay = () => {
     setProgress(12);
     setRunning(true);
+  };
+
+  const runAlexaDemoTurn = async () => {
+    if (alexaRunning) return;
+    setAlexaRunning(true);
+    setAlexaError("");
+    try {
+      const run = await callAlexaTool(alexaTurns[alexaTurn]);
+      setAlexaResult(run);
+      setAlexaTurn((current) => (current + 1) % alexaTurns.length);
+    } catch (error) {
+      setAlexaError(error instanceof Error ? error.message : "The local MCP request failed");
+      setAlexaResult(null);
+    } finally {
+      setAlexaRunning(false);
+    }
   };
 
   useEffect(() => {
@@ -346,14 +451,16 @@ export default function Home() {
             <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.035em]">Ask once. Hear the evidence.</h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-[#65716b]">This local replay shows how an Alexa+-style client calls RewardRadar’s self-hosted MCP endpoint. The response never turns an advertised amount into a promised payout.</p>
             <div className="mt-5 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[.12em] text-[#69736e]"><span className="flex items-center gap-1 border border-[#d5d0c7] bg-[#f2efe8] px-2 py-1"><Server size={13} /> POST /mcp</span><span className="border border-[#d5d0c7] bg-[#f2efe8] px-2 py-1">MCP 2025-11-25</span><span className="border border-[#a8dfb5] bg-[#edf8ef] px-2 py-1 text-[#12622f]">Fixture only</span></div>
-            <button type="button" onClick={() => setAlexaTurn((current) => (current + 1) % alexaTurns.length)} className="mt-6 flex items-center gap-2 border border-[#18211f] bg-[#18211f] px-4 py-2.5 text-xs font-bold text-white shadow-[3px_3px_0_#ff5d24] transition hover:-translate-y-0.5"><Sparkles size={14} />Replay next voice turn</button>
+            <button type="button" onClick={runAlexaDemoTurn} disabled={alexaRunning} className="mt-6 flex items-center gap-2 border border-[#18211f] bg-[#18211f] px-4 py-2.5 text-xs font-bold text-white shadow-[3px_3px_0_#ff5d24] transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"><Sparkles size={14} />{alexaRunning ? "Calling local MCP…" : "Run next MCP tool"}</button>
+            <p className="mt-2 text-[10px] font-medium text-[#69736e]">Requires the local demo servers on ports 5173 and 8787. No cloud account or credentials.</p>
+            {alexaError && <p role="alert" className="mt-3 border border-[#efb1a8] bg-[#fff0ed] p-3 text-xs font-semibold text-[#972c22]">{alexaError}. Start <code>python -m agent.alexa_mcp_server</code> in a second terminal, then retry.</p>}
             <figure className="mt-6 border border-[#d5d0c7] bg-[#f2efe8] p-3"><video className="aspect-video w-full bg-[#18211f]" controls preload="metadata" aria-label="RewardRadar Alexa Plus demonstration video"><source src="media/AlexaPlus-demo-v0.2.mp4" type="video/mp4" />Your browser does not support the demo video.</video><figcaption className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-[.1em] text-[#69736e]"><span>94.89 s · male narration</span><span>local fixture · no payout claim</span></figcaption></figure>
           </div>
           <div className="border border-[#d5d0c7] bg-[#132c27] p-4 text-white md:p-5">
-            <div className="flex items-center justify-between border-b border-[#355149] pb-3"><span className="text-[10px] font-bold uppercase tracking-[.14em] text-[#9db0aa]">Turn 0{alexaTurn + 1} / 04</span><span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] text-[#66d184]"><span className="h-2 w-2 rounded-full bg-[#66d184]" />MCP response</span></div>
-            <div className="mt-4 flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#ff5d24] text-white"><Bot size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#ff9a73]">Alexa+</p><p className="mt-1 text-sm font-semibold leading-6 text-[#f8f6f1]">“{alexaTurns[alexaTurn].prompt}”</p></div></div>
-            <div className="my-4 ml-11 border-l-2 border-[#ff5d24] pl-3"><p className="font-mono text-[10px] font-bold uppercase tracking-[.1em] text-[#ff9a73]">tool · {alexaTurns[alexaTurn].tool}</p></div>
-            <div className="flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#1d4038] text-[#cde8df]"><ShieldCheck size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#9db0aa]">RewardRadar</p><p className="mt-1 text-sm leading-6 text-[#c8d8d3]">{alexaTurns[alexaTurn].response}</p><p className="mt-3 font-mono text-[10px] text-[#8fa39d]">{alexaTurns[alexaTurn].evidence}</p></div></div>
+            <div className="flex items-center justify-between border-b border-[#355149] pb-3"><span className="text-[10px] font-bold uppercase tracking-[.14em] text-[#9db0aa]">Alexa+ tool demo · live local call</span><span className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] ${alexaResult ? "text-[#66d184]" : "text-[#e8bf68]"}`}><span className={`h-2 w-2 rounded-full ${alexaResult ? "bg-[#66d184]" : "bg-[#e8bf68]"}`} />{alexaResult ? "MCP tool response" : "Waiting for local MCP"}</span></div>
+            <div className="mt-4 flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#ff5d24] text-white"><Bot size={16} /></div><div><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#ff9a73]">Alexa+</p><p className="mt-1 text-sm font-semibold leading-6 text-[#f8f6f1]">“{alexaResult?.prompt ?? alexaTurns[alexaTurn].prompt}”</p></div></div>
+            <div className="my-4 ml-11 border-l-2 border-[#ff5d24] pl-3"><p className="font-mono text-[10px] font-bold uppercase tracking-[.1em] text-[#ff9a73]">tool · {alexaResult?.tool ?? alexaTurns[alexaTurn].tool}</p></div>
+            <div className="flex gap-3"><div className="grid h-8 w-8 shrink-0 place-items-center bg-[#1d4038] text-[#cde8df]"><ShieldCheck size={16} /></div><div className="min-w-0 flex-1"><p className="text-[10px] font-bold uppercase tracking-[.12em] text-[#9db0aa]">Actual local server result</p>{alexaResult ? <><p className="mt-1 text-sm font-semibold leading-6 text-[#c8d8d3]">Tool call succeeded: {alexaResult.tool}</p><p className="mt-1 font-mono text-[10px] text-[#8fa39d]">MCP session · {alexaResult.sessionId}</p><pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words border border-[#355149] bg-[#0d211d] p-3 font-mono text-[10px] leading-5 text-[#d3e1dc]">{JSON.stringify(alexaResult.result, null, 2)}</pre></> : <p className="mt-1 text-sm leading-6 text-[#c8d8d3]">No tool call has run yet. Start the two local demo servers and click “Run next MCP tool” to see the real response.</p>}</div></div>
           </div>
         </section>
 
