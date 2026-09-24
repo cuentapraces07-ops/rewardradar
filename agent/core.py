@@ -8,7 +8,8 @@ and review the evidence before acting.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
+from datetime import UTC, datetime
 from typing import Iterable, Literal
 
 
@@ -32,6 +33,8 @@ class Candidate:
     payout_rail_ready: bool = False
     deadline_days: int | None = None
     base_probability: float | None = None
+    probability_basis: str | None = None
+    deadline_at: str | None = None
 
 
 @dataclass(slots=True)
@@ -53,6 +56,20 @@ class Decision:
 def assess_candidate(candidate: Candidate) -> Decision:
     """Score one opportunity using inspectable, conservative evidence weights."""
 
+    if candidate.deadline_at:
+        try:
+            deadline = datetime.fromisoformat(candidate.deadline_at.replace("Z", "+00:00"))
+            if deadline.tzinfo is None:
+                deadline = deadline.replace(tzinfo=UTC)
+            remaining_seconds = (deadline - datetime.now(UTC)).total_seconds()
+            candidate = replace(
+                candidate,
+                status=("closed" if remaining_seconds <= 0 else candidate.status),
+                deadline_days=max(0, int((remaining_seconds + 86399) // 86400)),
+            )
+        except (TypeError, ValueError):
+            candidate = replace(candidate, status="unknown", deadline_days=None)
+
     reasons: list[str] = []
     probability = candidate.base_probability
     if probability is None:
@@ -64,6 +81,12 @@ def assess_candidate(candidate: Candidate) -> Decision:
         reasons.append("Sponsor identity is verifiable")
     else:
         reasons.append("Sponsor has not been independently verified")
+
+    if candidate.base_probability is not None:
+        reasons.append(
+            candidate.probability_basis
+            or "Probability is an explicit planning input, not an observed win rate"
+        )
 
     if candidate.payout_rail_ready:
         if candidate.base_probability is None:
@@ -115,7 +138,7 @@ def assess_candidate(candidate: Candidate) -> Decision:
 
     if candidate.payout_usd >= 100 and probability >= 0.07 and hourly >= 5:
         verdict: Verdict = "pursue"
-    elif candidate.status.lower() == "open" and probability >= 0.06 and hourly >= 1:
+    elif candidate.status.lower() == "open" and hourly >= 1:
         verdict = "watch"
     else:
         verdict = "avoid"

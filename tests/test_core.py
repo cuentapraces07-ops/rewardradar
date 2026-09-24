@@ -97,6 +97,58 @@ class DecisionTests(unittest.TestCase):
         )
         self.assertEqual(decision.verdict, "avoid")
 
+    def test_low_probability_high_upside_is_watch_not_silently_dropped(self):
+        decision = assess_candidate(
+            Candidate(
+                source="test",
+                title="Online contest with large advertised prize",
+                url="https://example.test/7",
+                payout_usd=15000,
+                estimated_hours=40,
+                sponsor_verified=True,
+                acceptance_clear=True,
+                base_probability=0.01,
+                probability_basis="1% illustrative planning scenario only; not empirical.",
+            )
+        )
+        self.assertEqual(decision.verdict, "watch")
+        self.assertEqual(decision.payment_probability, 0.01)
+        self.assertIn("not empirical", " ".join(decision.reasons))
+
+    def test_expired_status_overrides_any_historical_probability(self):
+        decision = assess_candidate(
+            Candidate(
+                source="test",
+                title="Expired contest",
+                url="https://example.test/8",
+                payout_usd=5000,
+                estimated_hours=20,
+                status="open",
+                base_probability=0.5,
+                deadline_at="2020-01-01T00:00:00Z",
+            )
+        )
+        self.assertEqual(decision.payment_probability, 0)
+        self.assertEqual(decision.verdict, "avoid")
+        self.assertEqual(decision.candidate.status, "closed")
+
+    def test_unparseable_deadline_fails_closed(self):
+        decision = assess_candidate(
+            Candidate(
+                source="test",
+                title="Unknown-deadline contest",
+                url="https://example.test/9",
+                payout_usd=10000,
+                estimated_hours=1,
+                status="open",
+                base_probability=0.5,
+                deadline_at="not-a-date",
+            )
+        )
+        self.assertEqual(decision.payment_probability, 0)
+        self.assertEqual(decision.verdict, "avoid")
+        self.assertEqual(decision.candidate.status, "unknown")
+
 
 
 if __name__ == "__main__":
