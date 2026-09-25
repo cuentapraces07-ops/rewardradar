@@ -26,17 +26,17 @@ if str(ROOT) not in sys.path:
 from agent.alexa_mcp_server import CaseStore, handle_rpc
 
 
-WORK = ROOT.parent / "work" / "alexa-plus-video"
-DEFAULT_OUTPUT = ROOT.parent / "outputs" / "AlexaPlus-demo-draft.mp4"
+WORK = ROOT.parent / "work" / "alexa-plus-video-v0.3"
+DEFAULT_OUTPUT = ROOT.parent / "outputs" / "AlexaPlus-demo-v0.3-draft.mp4"
 INK, PAPER, WHITE, ORANGE, GREEN, MUTED, RED = "#172a25", "#f3f0e9", "#fffdf8", "#ff5d24", "#2e9f50", "#69736e", "#a5372b"
 
 NARRATION = [
-    "RewardRadar is an evidence-first voice experience for Alexa Plus. Ask which opportunity is worth your next hour, and the system checks source state, competition, and payout signals before it answers.",
+    "RewardRadar is a simulated Alexa Plus experience in a web app. A user types a natural-language request, and the local system shows the source state, competition, and payout signals before it answers.",
     "The project exposes a self-hosted MCP endpoint over Streamable HTTP using protocol version 2025-11-25. This local run is credential-free and reads a transparent fixture, so every claim can be reproduced.",
-    "The voice request calls search rewards. RewardRadar ranks by payment-adjusted hourly value, not by the largest headline. The response keeps the source trail and labels planning assumptions.",
-    "A follow-up calls plan pursuit with a time limit and minimum payout. It ranks only matching fixture evidence, opens an opaque case, reports the assumptions, and stops at a human confirmation gate. It never submits work, spends money, or claims guaranteed payment.",
+    "The typed request calls respond to request. A deterministic router extracts a minimum advertised payout and time limit, then checks only the local fixture. The one percent figure is an illustrative planning scenario, not an empirical win rate.",
+    "The first matching scenario is a fifteen-thousand-dollar second-place cash tier, not a promise. The first-place bundle lists a meeting, which is outside the owner's allowed scope. A case records only numeric constraints and public fixture evidence; it never stores the raw request.",
     "After a reconnect, review pursuit case restores only that frozen public-fixture decision. It compares alternatives, shows verification gaps, and preserves the owner gate. Cases are memory-only, capped, and expire automatically.",
-    "A second question calls verify funding. Escrow, sponsor verification, and a payout rail are separate signals. Missing evidence lowers confidence; an advertised reward is never reported as money earned.",
+    "A second question calls verify funding. The sponsor identity is verified, but escrow and payout-rail readiness are not. Missing evidence stays visible; an advertised reward is never reported as money earned.",
     "The same project includes a focus-ready Fire TV web view and fail-closed Ring and Bee adapter boundaries. Fire TV still needs a simulator capture, Ring needs authorized API evidence, and Bee needs real Bee or Apple Watch data.",
     "This is a working Alexa Plus prototype, not a guarantee of a prize. It gives builders a faster, safer answer to one practical question: should I spend my next hour here?",
 ]
@@ -90,7 +90,7 @@ def frame(number: int, kicker: str, title: str, subtitle: str = "") -> tuple[Ima
     return image, draw
 
 
-def case_transcript() -> tuple[dict, dict]:
+def case_transcript() -> tuple[dict, dict, dict]:
     """Run the real local case/reconnect path used in the rendered demo."""
 
     store = CaseStore()
@@ -100,8 +100,8 @@ def case_transcript() -> tuple[dict, dict]:
             "id": 1,
             "method": "tools/call",
             "params": {
-                "name": "plan_pursuit",
-                "arguments": {"minimum_payout_usd": 100, "max_hours": 40},
+                "name": "respond_to_request",
+                "arguments": {"request": "Find an opportunity above $100 for 40 hours."},
             },
         },
         store,
@@ -119,20 +119,35 @@ def case_transcript() -> tuple[dict, dict]:
         },
         store,
     )["result"]["structuredContent"]
-    return planned, reviewed
+    funding = handle_rpc(
+        {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "method": "tools/call",
+            "params": {
+                "name": "respond_to_request",
+                "arguments": {
+                    "request": "Check whether funding is escrowed",
+                    "case_id": planned["casefile"]["case_id"],
+                },
+            },
+        },
+        store,
+    )["result"]["structuredContent"]
+    return planned, reviewed, funding
 
 
 def build_frames() -> list[Path]:
     WORK.mkdir(parents=True, exist_ok=True)
     frames: list[Image.Image] = []
-    planned, reviewed = case_transcript()
+    planned, reviewed, funding = case_transcript()
     recommendation = planned["recommendation"]
     case_id = planned["casefile"]["case_id"][:12]
 
-    image, draw = frame(1, "Alexa+ · voice-first evidence", "ASK ONCE. HEAR THE EVIDENCE.", "A self-hosted MCP surface for deciding whether paid technical work is worth the next hour.")
+    image, draw = frame(1, "Alexa+ · simulated web experience", "TYPE A QUESTION. SEE THE EVIDENCE.", "A self-hosted MCP surface for deciding whether paid technical work is worth the next hour.")
     draw.rectangle((70, 520, 1530, 730), fill=INK)
-    draw.text((108, 566), '"Which opportunity is worth my next two hours?"', fill=WHITE, font=font(32, bold=True))
-    draw.text((108, 647), "Alexa+  →  RewardRadar  →  source-backed answer", fill="#ff9a73", font=font(23, mono=True))
+    draw.text((108, 566), '"Find an opportunity above $100 for 40 hours."', fill=WHITE, font=font(32, bold=True))
+    draw.text((108, 647), "Typed request  →  local MCP  →  fixture-backed answer", fill="#ff9a73", font=font(23, mono=True))
     frames.append(image)
 
     image, draw = frame(2, "MCP transport", "A SMALL, INSPECTABLE SERVER.", "Streamable HTTP · MCP 2025-11-25 · no credentials in the demo")
@@ -143,31 +158,31 @@ def build_frames() -> list[Path]:
         ('{"protocolVersion":"2025-11-25"}', GREEN),
         ('{"method":"tools/list","id":2}', WHITE),
         ('search_rewards · verify_funding · summarize_submission_status', "#b9ccc6"),
-        ('plan_pursuit · review_pursuit_case · read-only', "#ff9a73"),
+        ('plan_pursuit · review_pursuit_case · respond_to_request', "#ff9a73"),
     ]
     y = 515
     for text, color in lines:
         draw.text((110, y), text, fill=color, font=font(25, mono=True))
-        y += 46
+        y += 38
     frames.append(image)
 
-    image, draw = frame(3, "Tool call · search_rewards", "THE LARGEST NUMBER IS NOT THE ANSWER.")
+    image, draw = frame(3, "Tool call · respond_to_request", "A VISIBLE SCENARIO, NOT A PROMISE.")
     draw.rectangle((70, 465, 760, 735), fill=WHITE, outline="#bbb6ac", width=2)
     draw.text((105, 500), "REQUEST", fill=MUTED, font=font(15, bold=True))
-    draw.text((105, 548), "search_rewards", fill=INK, font=font(31, mono=True, bold=True))
-    draw.text((105, 620), "query:  \"\"", fill=MUTED, font=font(22, mono=True))
-    draw.text((105, 665), "limit:  3", fill=MUTED, font=font(22, mono=True))
+    draw.text((105, 548), "respond_to_request", fill=INK, font=font(28, mono=True, bold=True))
+    draw.text((105, 620), "minimum payout: $100", fill=MUTED, font=font(22, mono=True))
+    draw.text((105, 665), "max effort: 40 hours", fill=MUTED, font=font(22, mono=True))
     draw.rectangle((825, 465, 1530, 735), fill="#d8f6df", outline="#a8dfb5", width=2)
     draw.text((865, 500), "RESPONSE", fill=GREEN, font=font(15, bold=True))
-    draw.text((865, 548), "$5,000 headline", fill=INK, font=font(35, mono=True, bold=True))
-    draw.text((865, 615), "8% planning probability", fill=INK, font=font(24, mono=True))
-    draw.text((865, 665), "Expected value: $400", fill=GREEN, font=font(25, mono=True, bold=True))
+    draw.text((865, 548), "$15,000 second place", fill=INK, font=font(29, mono=True, bold=True))
+    draw.text((865, 605), "1% illustrative scenario", fill=INK, font=font(23, mono=True))
+    draw.text((865, 655), "Scenario value: $150", fill=GREEN, font=font(25, mono=True, bold=True))
     frames.append(image)
 
-    image, draw = frame(4, "Tool call · plan_pursuit", "A PLAN, NOT AN AUTOPILOT.", "Time-boxed ranking opens an opaque local case with an explicit human confirmation gate.")
+    image, draw = frame(4, "Follow-up · read-only case", "A PLAN, NOT AN AUTOPILOT.", "Time-boxed ranking opens an opaque local case with an explicit human confirmation gate.")
     draw.rectangle((70, 475, 760, 735), fill=WHITE, outline="#bbb6ac", width=2)
     draw.text((105, 500), "REQUEST", fill=MUTED, font=font(15, bold=True))
-    draw.text((105, 548), "plan_pursuit", fill=INK, font=font(31, mono=True, bold=True))
+    draw.text((105, 548), "casefile created", fill=INK, font=font(31, mono=True, bold=True))
     draw.text((105, 620), "max_hours: 40", fill=MUTED, font=font(22, mono=True))
     draw.text((105, 665), "minimum_payout: $100", fill=MUTED, font=font(22, mono=True))
     draw.rectangle((825, 465, 1530, 735), fill="#fff0d8", outline="#e7bf84", width=2)
@@ -193,7 +208,11 @@ def build_frames() -> list[Path]:
 
     image, draw = frame(6, "Tool call · verify_funding", "EVIDENCE GAPS STAY AUDIBLE.")
     draw.rectangle((70, 475, 1000, 735), fill=INK)
-    checks = [("escrow", "not verified", RED), ("sponsor", "not verified", RED), ("payout rail", "owner setup", ORANGE)]
+    checks = [
+        ("escrow", "not verified" if not funding.get("escrowed") else "verified", RED if not funding.get("escrowed") else GREEN),
+        ("sponsor", "verified" if funding.get("sponsor_verified") else "not verified", GREEN if funding.get("sponsor_verified") else RED),
+        ("payout rail", "ready" if funding.get("payout_rail_ready") else "not verified", GREEN if funding.get("payout_rail_ready") else ORANGE),
+    ]
     y = 515
     for label, value, color in checks:
         draw.text((112, y), f"{label:<14}", fill="#b9ccc6", font=font(24, mono=True))
@@ -201,7 +220,7 @@ def build_frames() -> list[Path]:
         y += 62
     draw.rectangle((1060, 475, 1530, 735), fill="#ffe0db", outline="#e4a99f", width=2)
     draw.text((1095, 515), "VOICE ANSWER", fill=RED, font=font(15, bold=True))
-    draw.text((1095, 570), "NOT\nGUARANTEED", fill=RED, font=font(46, bold=True), spacing=4)
+    draw.text((1095, 570), "NOT\nVERIFIED", fill=RED, font=font(46, bold=True), spacing=4)
     draw.text((1095, 690), "headline ≠ income", fill=INK, font=font(20, mono=True, bold=True))
     frames.append(image)
 

@@ -9,59 +9,70 @@ The field-by-field completeness map is `docs/AMAZON-FIELD-MAP.md`.
 
 ## Project
 
-**RewardRadar: Ask once. Hear the evidence.**
+**RewardRadar: Evidence before effort.**
 
-RewardRadar is a read-only Alexa+-style experience for choosing work from
-public opportunity evidence without confusing an advertised prize with earned
-income. A user can ask for an opportunity above a minimum amount and below a
-time budget; the local MCP server returns a ranked fixture-backed result,
-disclosures, and owner-controlled next steps.
+RewardRadar is a read-only Alexa+ web simulation for evaluating public work
+opportunities without confusing an advertised prize with earned income. A user
+types a payout floor and time budget; a local self-hosted MCP server routes the
+request, checks a disclosed fixture, and returns a ranked result, assumptions,
+evidence gaps, and owner-controlled next steps. The demo does not use speech
+recognition, a hosted language model, or live marketplace data.
 
 ## Problem
 
 Builders waste time on stale listings, locked issues, crowded claims and
-unverified payout promises. Voice-first interfaces can make that worse if a
-short answer hides uncertainty. RewardRadar keeps the evidence trail, risk
-signals and expected-value assumptions visible in the same response.
+unverified payout promises. A conversational interface can make that worse if
+a short answer hides uncertainty. RewardRadar keeps the source trail, risk
+signals and illustrative planning assumptions visible in the same response.
 
 ## Alexa+ technical surface
 
 - Self-hosted MCP endpoint: `POST /mcp` and `GET /health`.
 - JSON-RPC handshake advertises MCP `2025-11-25`.
-- Five read-only tools: `search_rewards`, `verify_funding`,
-  `summarize_submission_status`, `plan_pursuit`, and `review_pursuit_case`.
-  The planning tool opens an expiring, fixture-only casefile. A later review
-  can compare alternatives, show verification gaps, or surface next steps
-  after a reconnect to the same local server process, without turning an
-  advertised prize into a payout claim.
+- Six read-only tools: `search_rewards`, `verify_funding`,
+  `summarize_submission_status`, `plan_pursuit`, `review_pursuit_case`, and
+  `respond_to_request`. The last is a deterministic text router, not an LLM.
+  Planning opens an expiring, fixture-only casefile; a later request can
+  compare alternatives, check funding signals, show verification gaps, or
+  surface next steps after reconnecting to the same local server process.
+- The Amazon Alexa+ row uses the advertised second-place cash amount and a 1%
+  illustrative scenario input only. That percentage is not an empirical win
+  rate; escrow and payout-rail readiness are not verified. The prototype never
+  turns an advertised prize into earned income or a payment guarantee.
 - The demo uses checked-in fixtures only; it has no AWS credential, payout
   wallet, submission mutation, or external contact path.
 - A draft friction log is prepared at `docs/AMAZON-FRICTION-LOG.md`; it is not
   submitted and contains only reproducible local observations.
 - `/` presents the evidence dashboard and `/tv` presents a ten-foot view.
 
-## Demo script (under three minutes)
+## Intended demo capture (under three minutes; runtime capture still pending)
 
-1. Show the dashboard's source, payout, evidence gaps, and “not guaranteed”
-   labels.
-2. Open the Alexa+ replay and call `plan_pursuit` with a minimum payout and
-   maximum-hours constraint.
-3. Reconnect, call `review_pursuit_case`, and show the preserved alternatives,
-   verification gaps, and explicit `owner_confirmation_required` gate.
-4. Open the source evidence panel and show that no account, wallet, or
-   submission action occurred.
+1. Start `pnpm dev` and `python -m agent.alexa_mcp_server --port 8787` locally.
+2. Record the browser UI while typing “Find an opportunity above $100 for 40
+   hours” and showing the response returned by the real local MCP endpoint.
+3. Reconnect and show a follow-up against the same in-memory case, including
+   the funding check and explicit `owner_confirmation_required` gate.
+4. Show the source evidence and that no account, wallet, or submission action
+   occurred.
+
+The local v0.3 MP4 is a narrated storyboard built from real local tool
+responses, not a screen recording of the browser UI. It is useful for review
+but is not sufficient evidence by itself for the contest's demo-video
+requirement. Do not describe it as a live device or browser capture.
 
 ## Verification already run
 
 ```text
-pnpm verify:amazon                                  # 11 checks passed; 94.89s checked-in demo
-python -m unittest discover -s tests -v              # 41 passed, 1 optional skip (42 total) in the current local worktree
+pnpm verify:amazon                                  # 17 checks passed; checked-in v0.2 asset is 94.89s
+python -m unittest discover -s tests -v              # 54 passed, 1 optional skip (55 total)
 pnpm lint                                            # passed locally
-pnpm build                                           # passed locally for / and /tv
 ```
 
-The v0.2.1 local casefile render is 111.55 seconds and has not been uploaded
-or linked from any submission form.
+The current local v0.3 storyboard at
+`../outputs/AlexaPlus-demo-v0.3-validated.mp4` is 115.56 seconds, H.264/AAC,
+1600×900. It has not been uploaded or linked from any submission form, and it
+does not replace the separate runtime-capture step above. The checked-in 94.89s
+v0.2 video and the older 111.55s v0.2.1 render predate the typed router.
 
 ## Owner-controlled gates
 

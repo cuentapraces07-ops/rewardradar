@@ -2,7 +2,10 @@
 
 **Stop chasing phantom bounties.** RewardRadar is a Strands multi-agent system that audits paid technical opportunities before a contributor commits scarce time. It cross-checks marketplace claims against canonical sources, identifies payment and competition risk, and ranks only the opportunities that survive by expected return.
 
-Built for the **Professional Agents** track of the 2026 Agents for Humans hackathon.
+Current local direction: a credential-free **Alexa+ web simulation** for the
+2026 Amazon Developer Hackathon. The project was originally built for the
+Professional Agents track of Agents for Humans; those earlier marketplace
+captures remain historical evidence, not current open opportunities.
 
 ## Why this exists
 
@@ -16,7 +19,7 @@ RewardRadar turns that noisy inventory into one defensible decision. It never eq
 
 - **Evidence before synthesis.** GitHub issue state, lock state, claim count, payout rail, and acceptance criteria are deterministic inputs.
 - **Specialist graph.** Scout → Verifier → Risk Analyst → ROI Ranker is implemented as a four-node `strands.multiagent.GraphBuilder` graph.
-- **Deterministic formulas.** Expected-value arithmetic and verdict thresholds live in unit-tested Python. Evidence fields and base probabilities remain explicit inputs that must be reviewed.
+- **Deterministic formulas.** Scenario-value arithmetic and verdict thresholds live in unit-tested Python. Evidence fields and base probabilities remain explicit planning inputs; contest win chances are not empirically measured.
 - **Honest uncertainty.** Every result separates payout, probability, effort, confidence, and risk signals.
 - **Two explicit execution modes.** A deterministic demo model exercises the real Strands graph in CI, while `agent.bedrock_demo` runs the same graph against Amazon Bedrock through the standard AWS credential chain.
 
@@ -74,14 +77,17 @@ The repository includes a credential-free self-hosted MCP endpoint for the
 Alexa+ track. Run `python -m agent.alexa_mcp_server --port 8787` and send
 JSON-RPC requests to `POST /mcp`. It exposes the evidence-first RewardRadar
 fixture via `search_rewards`, `verify_funding`, and
-`summarize_submission_status`, plus `plan_pursuit` and the resumable,
-memory-only `review_pursuit_case` tool; see
+`summarize_submission_status`, plus `plan_pursuit`, the resumable,
+memory-only `review_pursuit_case`, and the typed-request router
+`respond_to_request`; see
 `docs/ALEXA_PLUS.md`. The prototype is
 explicitly fixture-only and does not claim a live Alexa+ integration or a prize.
-A short English walkthrough is committed at
+An older English walkthrough is committed at
 [`public/media/AlexaPlus-demo-v0.2.mp4`](public/media/AlexaPlus-demo-v0.2.mp4).
-The v0.2.1 generator now renders an actual local case/reconnect transcript;
-that new local render is not represented as uploaded or linked from a form.
+The current generator uses a typed request and an actual local case/reconnect
+transcript, but the older walkthrough predates that feature and is not current
+evidence. No new video render is represented as uploaded or linked from a
+form.
 Run `pnpm verify:amazon` to validate the local repository reference, license,
 MCP surface, owner-gated submission notes, demo duration, and absence of
 labeled live credentials or payout data.

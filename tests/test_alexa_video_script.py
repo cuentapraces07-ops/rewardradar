@@ -22,7 +22,7 @@ def load_video_module():
 class AlexaVideoScriptTests(unittest.TestCase):
     def test_case_transcript_uses_a_real_resumable_case(self):
         module = load_video_module()
-        planned, reviewed = module.case_transcript()
+        planned, reviewed, funding = module.case_transcript()
 
         self.assertEqual(planned["casefile"]["state"], "open")
         self.assertEqual(len(planned["casefile"]["fixture_digest_sha256"]), 64)
@@ -30,6 +30,10 @@ class AlexaVideoScriptTests(unittest.TestCase):
         self.assertEqual(reviewed["focus"], "comparison")
         self.assertIn("alternatives", reviewed["evidence_card"])
         self.assertFalse(reviewed["safety"]["payout_guaranteed"])
+        self.assertEqual(planned["recommendation"]["title"], "Build, Ship, Shape: Alexa+ track — second-place cash scenario")
+        self.assertEqual(funding["intent"], "verify_funding")
+        self.assertFalse(funding["verified"])
+        self.assertTrue(funding["sponsor_verified"])
 
 
 if __name__ == "__main__":
