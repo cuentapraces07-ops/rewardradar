@@ -101,6 +101,7 @@ class AlexaMCPHttpTests(unittest.TestCase):
             request()
         try:
             self.assertEqual(raised.exception.code, status)
+            self.assertTrue(raised.exception.read(), "HTTP errors should return a JSON body")
         finally:
             raised.exception.close()
 

@@ -662,18 +662,23 @@ class MCPHandler(BaseHTTPRequestHandler):
         "http://localhost:5173",
     }
 
+    def _discard_request_body(self) -> None:
+        """Drain a bounded request body before returning an early HTTP error."""
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            length = -1
+        if length < 0 or length > 1024 * 1024:
+            self.close_connection = True
+            return
+        if length and len(self.rfile.read(length)) != length:
+            self.close_connection = True
+
     def _reject_invalid_origin(self) -> bool:
         origin = self.headers.get("Origin")
         if origin is not None and origin not in self.allowed_origins:
             if self.command == "POST":
-                try:
-                    length = int(self.headers.get("Content-Length", "0"))
-                except ValueError:
-                    length = -1
-                if 0 <= length <= 1024 * 1024:
-                    self.rfile.read(length)
-                else:
-                    self.close_connection = True
+                self._discard_request_body()
             self._send_json({"error": "Origin is not allowed"}, HTTPStatus.FORBIDDEN)
             return True
         return False
@@ -734,10 +739,12 @@ class MCPHandler(BaseHTTPRequestHandler):
         if self._reject_invalid_origin():
             return
         if self.path != "/mcp":
+            self._discard_request_body()
             self._send_json({"error": "MCP endpoint is /mcp"}, HTTPStatus.NOT_FOUND)
             return
         content_type = self.headers.get_content_type()
         if content_type != "application/json":
+            self._discard_request_body()
             self._send_json({"error": "Content-Type must be application/json"}, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
             return
         accepted_types = {
@@ -745,6 +752,7 @@ class MCPHandler(BaseHTTPRequestHandler):
             for part in self.headers.get("Accept", "").split(",")
         }
         if not {"application/json", "text/event-stream"}.issubset(accepted_types):
+            self._discard_request_body()
             self._send_json(
                 {"error": "Accept must include application/json and text/event-stream"},
                 HTTPStatus.BAD_REQUEST,
@@ -755,6 +763,7 @@ class MCPHandler(BaseHTTPRequestHandler):
         except ValueError:
             length = -1
         if length < 0:
+            self.close_connection = True
             self._send_json({"error": "A valid Content-Length is required"}, HTTPStatus.BAD_REQUEST)
             return
         if length > 1024 * 1024:
