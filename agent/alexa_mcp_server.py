@@ -22,6 +22,7 @@ import copy
 import hashlib
 import json
 import re
+import secrets
 import threading
 import time
 import uuid
@@ -681,12 +682,19 @@ class MCPHandler(BaseHTTPRequestHandler):
         origin = self.headers.get("Origin")
         return origin if origin in self.allowed_origins else None
 
-    def _send_json(self, payload: dict[str, Any], status: int = HTTPStatus.OK) -> None:
+    def _send_json(
+        self,
+        payload: dict[str, Any],
+        status: int = HTTPStatus.OK,
+        *,
+        session_id: str | None = None,
+    ) -> None:
         body = json.dumps(payload, sort_keys=True).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Mcp-Session-Id", self.server.session_id)
+        if session_id is not None:
+            self.send_header("Mcp-Session-Id", session_id)
         origin = self._cors_origin()
         if origin:
             self.send_header("Access-Control-Allow-Origin", origin)
@@ -706,7 +714,7 @@ class MCPHandler(BaseHTTPRequestHandler):
         self.send_response(HTTPStatus.NO_CONTENT)
         self.send_header("Access-Control-Allow-Origin", origin)
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Accept, Content-Type, Mcp-Session-Id, MCP-Protocol-Version")
+        self.send_header("Access-Control-Allow-Headers", "Accept, Content-Type, MCP-Session-Id, MCP-Protocol-Version")
         self.send_header("Access-Control-Max-Age", "300")
         self.send_header("Vary", "Origin")
         self.end_headers()
@@ -728,8 +736,32 @@ class MCPHandler(BaseHTTPRequestHandler):
         if self.path != "/mcp":
             self._send_json({"error": "MCP endpoint is /mcp"}, HTTPStatus.NOT_FOUND)
             return
+        content_type = self.headers.get_content_type()
+        if content_type != "application/json":
+            self._send_json({"error": "Content-Type must be application/json"}, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+            return
+        accepted_types = {
+            part.split(";", 1)[0].strip().lower()
+            for part in self.headers.get("Accept", "").split(",")
+        }
+        if not {"application/json", "text/event-stream"}.issubset(accepted_types):
+            self._send_json(
+                {"error": "Accept must include application/json and text/event-stream"},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
         try:
             length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            length = -1
+        if length < 0:
+            self._send_json({"error": "A valid Content-Length is required"}, HTTPStatus.BAD_REQUEST)
+            return
+        if length > 1024 * 1024:
+            self.close_connection = True
+            self._send_json({"error": "Request body exceeds 1 MiB"}, HTTPStatus.REQUEST_ENTITY_TOO_LARGE)
+            return
+        try:
             message = json.loads(self.rfile.read(length))
         except (ValueError, json.JSONDecodeError):
             self._send_json({"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}}, HTTPStatus.BAD_REQUEST)
@@ -737,10 +769,41 @@ class MCPHandler(BaseHTTPRequestHandler):
         if not isinstance(message, dict):
             self._send_json({"jsonrpc": "2.0", "id": None, "error": {"code": -32600, "message": "Invalid Request"}}, HTTPStatus.BAD_REQUEST)
             return
-        response = handle_rpc(message, self.server.case_store)
-        if response is None:
+        if message.get("jsonrpc") != "2.0" or not isinstance(message.get("method"), str):
+            self._send_json({"jsonrpc": "2.0", "id": message.get("id"), "error": {"code": -32600, "message": "Invalid Request"}}, HTTPStatus.BAD_REQUEST)
+            return
+
+        method = message["method"]
+        supplied_session = self.headers.get("Mcp-Session-Id")
+        if method == "initialize":
+            if message.get("id") is None or supplied_session is not None:
+                self._send_json({"jsonrpc": "2.0", "id": message.get("id"), "error": {"code": -32600, "message": "Initialize must be a request without an existing session"}}, HTTPStatus.BAD_REQUEST)
+                return
+            params = message.get("params")
+            if not isinstance(params, dict) or not isinstance(params.get("protocolVersion"), str):
+                self._send_json({"jsonrpc": "2.0", "id": message.get("id"), "error": {"code": -32602, "message": "Initialize requires params.protocolVersion"}}, HTTPStatus.BAD_REQUEST)
+                return
+            session_id = self.server.create_session()
+            response = handle_rpc(message, self.server.case_store)
+            self._send_json(response, session_id=session_id)
+            return
+
+        if not supplied_session:
+            self._send_json({"error": "MCP-Session-Id is required after initialization"}, HTTPStatus.BAD_REQUEST)
+            return
+        session = self.server.get_session(supplied_session)
+        if session is None:
+            self._send_json({"error": "MCP session was not found or has expired"}, HTTPStatus.NOT_FOUND)
+            return
+        protocol_header = self.headers.get("MCP-Protocol-Version")
+        if protocol_header != session["protocol_version"]:
+            self._send_json({"error": "MCP-Protocol-Version is missing or unsupported"}, HTTPStatus.BAD_REQUEST)
+            return
+        if method == "notifications/initialized" and "id" not in message:
+            if self.server.update_session(supplied_session, initialized=True) is None:
+                self._send_json({"error": "MCP session was not found or has expired"}, HTTPStatus.NOT_FOUND)
+                return
             self.send_response(HTTPStatus.ACCEPTED)
-            self.send_header("Mcp-Session-Id", self.server.session_id)
             origin = self._cors_origin()
             if origin:
                 self.send_header("Access-Control-Allow-Origin", origin)
@@ -748,6 +811,23 @@ class MCPHandler(BaseHTTPRequestHandler):
                 self.send_header("Vary", "Origin")
             self.end_headers()
             return
+        session = self.server.update_session(supplied_session)
+        if session is None:
+            self._send_json({"error": "MCP session was not found or has expired"}, HTTPStatus.NOT_FOUND)
+            return
+        if not session["initialized"]:
+            self._send_json({"error": "notifications/initialized must be received before requests"}, HTTPStatus.BAD_REQUEST)
+            return
+        if "id" not in message:
+            self.send_response(HTTPStatus.ACCEPTED)
+            origin = self._cors_origin()
+            if origin:
+                self.send_header("Access-Control-Allow-Origin", origin)
+                self.send_header("Access-Control-Expose-Headers", "Mcp-Session-Id, Server")
+                self.send_header("Vary", "Origin")
+            self.end_headers()
+            return
+        response = handle_rpc(message, self.server.case_store)
         self._send_json(response)
 
     def log_message(self, format: str, *args: Any) -> None:
@@ -756,11 +836,58 @@ class MCPHandler(BaseHTTPRequestHandler):
 
 class MCPServer(ThreadingHTTPServer):
     allow_reuse_address = True
+    session_ttl_seconds = 30 * 60
+    max_sessions = 128
 
     def __init__(self, address: tuple[str, int]):
         super().__init__(address, MCPHandler)
-        self.session_id = uuid.uuid4().hex
         self.case_store = CaseStore()
+        self._sessions: dict[str, dict[str, Any]] = {}
+        self._sessions_lock = threading.RLock()
+
+    def create_session(self) -> str:
+        now = time.monotonic()
+        with self._sessions_lock:
+            self._prune_sessions(now)
+            while len(self._sessions) >= self.max_sessions:
+                oldest = min(self._sessions, key=lambda key: self._sessions[key]["last_seen"])
+                del self._sessions[oldest]
+            session_id = secrets.token_urlsafe(32)
+            self._sessions[session_id] = {
+                "protocol_version": PROTOCOL_VERSION,
+                "initialized": False,
+                "last_seen": now,
+            }
+            return session_id
+
+    def get_session(self, session_id: str) -> dict[str, Any] | None:
+        now = time.monotonic()
+        with self._sessions_lock:
+            self._prune_sessions(now)
+            session = self._sessions.get(session_id)
+            return dict(session) if session is not None else None
+
+    def update_session(
+        self,
+        session_id: str,
+        *,
+        initialized: bool = False,
+    ) -> dict[str, Any] | None:
+        now = time.monotonic()
+        with self._sessions_lock:
+            self._prune_sessions(now)
+            session = self._sessions.get(session_id)
+            if session is not None:
+                session["last_seen"] = now
+                if initialized:
+                    session["initialized"] = True
+                return dict(session)
+            return None
+
+    def _prune_sessions(self, now: float) -> None:
+        for session_id, session in list(self._sessions.items()):
+            if now - session["last_seen"] >= self.session_ttl_seconds:
+                del self._sessions[session_id]
 
 
 def main(argv: list[str] | None = None) -> None:

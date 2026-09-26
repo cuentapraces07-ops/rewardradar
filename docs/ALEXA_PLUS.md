@@ -31,9 +31,14 @@ shows the connection failure rather than substituting a prerecorded answer.
 
 The MCP endpoint is `http://127.0.0.1:8787/mcp`; `GET /health` returns a
 readiness check and `GET /mcp` returns `405 Method Not Allowed` because the
-prototype does not offer an SSE stream. The browser client lists both JSON and
-SSE in `Accept` and sends `MCP-Protocol-Version: 2025-11-25` on its requests.
-The server rejects disallowed `Origin` values with `403`, including direct
+prototype does not offer an SSE stream. Each successful `initialize` request
+receives a cryptographically random `MCP-Session-Id`; the server requires that
+token and the negotiated `MCP-Protocol-Version: 2025-11-25` on follow-up
+requests, accepts `notifications/initialized` with an empty `202`, and expires
+idle sessions after 30 minutes. Session IDs are not attached to health checks
+or ordinary tool responses. The endpoint requires the standard JSON-plus-SSE
+`Accept` values, JSON request content, and caps request bodies at 1 MiB. The
+server rejects disallowed `Origin` values with `403`, including direct
 POSTs, and allows CORS only from the two local development origins. It
 implements the minimal JSON-RPC surface a client needs:
 

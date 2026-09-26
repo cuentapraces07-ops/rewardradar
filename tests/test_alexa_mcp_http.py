@@ -6,6 +6,7 @@ ephemeral loopback port and never contact an external service.
 
 from __future__ import annotations
 
+import http.client
 import json
 import threading
 import unittest
@@ -27,19 +28,81 @@ class AlexaMCPHttpTests(unittest.TestCase):
         self.server.server_close()
         self.thread.join(timeout=2)
 
-    def rpc(self, payload: dict) -> tuple[dict, str]:
+    def post(
+        self,
+        payload: dict,
+        session_id: str | None = None,
+        **overrides: str,
+    ) -> tuple[int, dict | None, str | None]:
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/event-stream",
+        }
+        if session_id:
+            headers.update(
+                {
+                    "MCP-Protocol-Version": PROTOCOL_VERSION,
+                    "Mcp-Session-Id": session_id,
+                }
+            )
+        headers.update(overrides)
         request = Request(
             f"{self.base}/mcp",
             data=json.dumps(payload).encode(),
-            headers={
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/event-stream",
-                "MCP-Protocol-Version": PROTOCOL_VERSION,
-            },
+            headers=headers,
             method="POST",
         )
         with urlopen(request, timeout=2) as response:
-            return json.loads(response.read()), response.headers["Mcp-Session-Id"]
+            body = response.read()
+            return (
+                response.status,
+                json.loads(body) if body else None,
+                response.headers.get("Mcp-Session-Id"),
+            )
+
+    def initialize(self) -> tuple[dict, str]:
+        status, payload, session_id = self.post(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": PROTOCOL_VERSION,
+                    "capabilities": {},
+                    "clientInfo": {"name": "test-client", "version": "1.0.0"},
+                },
+            }
+        )
+        self.assertEqual(status, 200)
+        self.assertIsNotNone(session_id)
+        status, body, returned_session = self.post(
+            {"jsonrpc": "2.0", "method": "notifications/initialized"}, session_id
+        )
+        self.assertEqual(status, 202)
+        self.assertIsNone(body)
+        self.assertIsNone(returned_session)
+        return payload, session_id
+
+    def rpc(self, payload: dict, session_id: str | None = None) -> tuple[dict, str]:
+        if payload.get("method") == "initialize":
+            status, result, new_session_id = self.post(payload)
+            self.assertEqual(status, 200)
+            self.assertIsNotNone(new_session_id)
+            return result, new_session_id
+        if session_id is None:
+            _, session_id = self.initialize()
+        status, result, returned_session_id = self.post(payload, session_id)
+        self.assertEqual(status, 200)
+        self.assertIsNone(returned_session_id)
+        return result, session_id
+
+    def assert_http_error(self, status: int, request) -> None:
+        with self.assertRaises(HTTPError) as raised:
+            request()
+        try:
+            self.assertEqual(raised.exception.code, status)
+        finally:
+            raised.exception.close()
 
     def test_health_is_local_and_explicit(self):
         with urlopen(f"{self.base}/health", timeout=2) as response:
@@ -47,7 +110,7 @@ class AlexaMCPHttpTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
             self.assertTrue(payload["ok"])
             self.assertEqual(payload["mode"], "fixture")
-            self.assertEqual(response.headers["Mcp-Session-Id"], self.server.session_id)
+            self.assertNotIn("Mcp-Session-Id", response.headers)
             self.assertTrue(
                 response.headers["Server"].startswith(
                     f"RewardRadarMCP/{SERVER_INFO['version']}"
@@ -55,37 +118,42 @@ class AlexaMCPHttpTests(unittest.TestCase):
             )
 
     def test_streamable_http_initialize_and_tools_list(self):
-        for request_id, method in ((1, "initialize"), (2, "tools/list")):
-            request = Request(
-                f"{self.base}/mcp",
-                data=json.dumps({"jsonrpc": "2.0", "id": request_id, "method": method}).encode(),
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json, text/event-stream",
-                    "MCP-Protocol-Version": PROTOCOL_VERSION,
-                },
-                method="POST",
-            )
-            with urlopen(request, timeout=2) as response:
-                payload = json.loads(response.read())
-                self.assertEqual(response.status, 200)
-                self.assertEqual(response.headers["Mcp-Session-Id"], self.server.session_id)
-                if method == "initialize":
-                    self.assertEqual(payload["result"]["protocolVersion"], PROTOCOL_VERSION)
-                else:
-                    names = [tool["name"] for tool in payload["result"]["tools"]]
-                    self.assertIn("plan_pursuit", names)
+        payload, session_id = self.initialize()
+        self.assertEqual(payload["result"]["protocolVersion"], PROTOCOL_VERSION)
+        self.assertGreaterEqual(len(session_id), 40)
+        status, listed, returned_session = self.post(
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, session_id
+        )
+        self.assertEqual(status, 200)
+        self.assertIsNone(returned_session)
+        names = [tool["name"] for tool in listed["result"]["tools"]]
+        self.assertIn("plan_pursuit", names)
 
     def test_initialized_notification_is_accepted_without_body(self):
+        status, _, session_id = self.post(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {"protocolVersion": PROTOCOL_VERSION},
+            }
+        )
+        self.assertEqual(status, 200)
+        self.assertIsNotNone(session_id)
         request = Request(
             f"{self.base}/mcp",
             data=json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}).encode(),
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream",
+                "MCP-Protocol-Version": PROTOCOL_VERSION,
+                "Mcp-Session-Id": session_id,
+            },
             method="POST",
         )
         with urlopen(request, timeout=2) as response:
             self.assertEqual(response.status, 202)
-            self.assertEqual(response.headers["Mcp-Session-Id"], self.server.session_id)
+            self.assertNotIn("Mcp-Session-Id", response.headers)
             self.assertEqual(response.read(), b"")
 
     def test_browser_preflight_allows_only_the_local_demo_origins(self):
@@ -101,7 +169,7 @@ class AlexaMCPHttpTests(unittest.TestCase):
         with urlopen(allowed, timeout=2) as response:
             self.assertEqual(response.status, 204)
             self.assertEqual(response.headers["Access-Control-Allow-Origin"], "http://127.0.0.1:5173")
-            self.assertIn("Mcp-Session-Id", response.headers["Access-Control-Allow-Headers"])
+            self.assertIn("MCP-Session-Id", response.headers["Access-Control-Allow-Headers"])
             self.assertIn("MCP-Protocol-Version", response.headers["Access-Control-Allow-Headers"])
 
         blocked = Request(
@@ -109,9 +177,7 @@ class AlexaMCPHttpTests(unittest.TestCase):
             headers={"Origin": "https://attacker.example", "Access-Control-Request-Method": "POST"},
             method="OPTIONS",
         )
-        with self.assertRaises(HTTPError) as raised:
-            urlopen(blocked, timeout=2)
-        self.assertEqual(raised.exception.code, 403)
+        self.assert_http_error(403, lambda: urlopen(blocked, timeout=2))
 
     def test_invalid_origin_is_rejected_on_mcp_post_and_health_get(self):
         request = Request(
@@ -120,13 +186,15 @@ class AlexaMCPHttpTests(unittest.TestCase):
             headers={"Origin": "https://attacker.example", "Content-Type": "application/json"},
             method="POST",
         )
-        with self.assertRaises(HTTPError) as raised_post:
-            urlopen(request, timeout=2)
-        self.assertEqual(raised_post.exception.code, 403)
+        self.assert_http_error(403, lambda: urlopen(request, timeout=2))
 
-        with self.assertRaises(HTTPError) as raised_get:
-            urlopen(Request(f"{self.base}/health", headers={"Origin": "https://attacker.example"}), timeout=2)
-        self.assertEqual(raised_get.exception.code, 403)
+        self.assert_http_error(
+            403,
+            lambda: urlopen(
+                Request(f"{self.base}/health", headers={"Origin": "https://attacker.example"}),
+                timeout=2,
+            ),
+        )
 
     def test_mcp_get_returns_405_when_server_does_not_offer_sse(self):
         request = Request(
@@ -134,9 +202,7 @@ class AlexaMCPHttpTests(unittest.TestCase):
             headers={"Accept": "text/event-stream", "Origin": "http://localhost:5173"},
             method="GET",
         )
-        with self.assertRaises(HTTPError) as raised:
-            urlopen(request, timeout=2)
-        self.assertEqual(raised.exception.code, 405)
+        self.assert_http_error(405, lambda: urlopen(request, timeout=2))
 
     def test_local_browser_origin_can_run_a_complete_read_only_mcp_tool_call(self):
         origin = "http://localhost:5173"
@@ -161,7 +227,16 @@ class AlexaMCPHttpTests(unittest.TestCase):
                 return response.status, response.headers.get("Mcp-Session-Id"), response.read()
 
         status, session_id, body = browser_post(
-            {"jsonrpc": "2.0", "id": 1, "method": "initialize"}
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": PROTOCOL_VERSION,
+                    "capabilities": {},
+                    "clientInfo": {"name": "browser-test", "version": "1.0.0"},
+                },
+            }
         )
         self.assertEqual(status, 200)
         self.assertTrue(session_id)
@@ -194,7 +269,8 @@ class AlexaMCPHttpTests(unittest.TestCase):
         self.assertEqual(len(result["results"]), 1)
 
     def test_casefile_survives_a_new_http_initialize(self):
-        planned, first_session = self.rpc(
+        _, first_session = self.initialize()
+        planned, _ = self.rpc(
             {
                 "jsonrpc": "2.0",
                 "id": 3,
@@ -203,12 +279,28 @@ class AlexaMCPHttpTests(unittest.TestCase):
                     "name": "plan_pursuit",
                     "arguments": {"minimum_payout_usd": 100, "max_hours": 40},
                 },
-            }
+            }, first_session
         )
         case_id = planned["result"]["structuredContent"]["casefile"]["case_id"]
-        initialized, second_session = self.rpc({"jsonrpc": "2.0", "id": 4, "method": "initialize"})
+        initialized, second_session = self.rpc(
+            {
+                "jsonrpc": "2.0",
+                "id": 4,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": PROTOCOL_VERSION,
+                    "capabilities": {},
+                    "clientInfo": {"name": "reconnect-test", "version": "1.0.0"},
+                },
+            }
+        )
+        self.assertNotEqual(first_session, second_session)
         self.assertEqual(initialized["result"]["protocolVersion"], PROTOCOL_VERSION)
-        self.assertEqual(first_session, second_session)
+        status, _, returned_session = self.post(
+            {"jsonrpc": "2.0", "method": "notifications/initialized"}, second_session
+        )
+        self.assertEqual(status, 202)
+        self.assertIsNone(returned_session)
 
         reviewed, third_session = self.rpc(
             {
@@ -219,16 +311,17 @@ class AlexaMCPHttpTests(unittest.TestCase):
                     "name": "review_pursuit_case",
                     "arguments": {"case_id": case_id, "focus": "evidence"},
                 },
-            }
+            }, second_session
         )
         value = reviewed["result"]["structuredContent"]
-        self.assertEqual(third_session, first_session)
+        self.assertEqual(third_session, second_session)
         self.assertTrue(value["case_found"])
         self.assertEqual(value["focus"], "evidence")
         self.assertIn("fixture_digest_sha256", value["evidence_card"])
         self.assertIn("verification_gaps", value["evidence_card"])
 
     def test_natural_request_and_followup_use_the_real_http_tool_boundary(self):
+        _, session_id = self.initialize()
         planned, _ = self.rpc(
             {
                 "jsonrpc": "2.0",
@@ -238,7 +331,7 @@ class AlexaMCPHttpTests(unittest.TestCase):
                     "name": "respond_to_request",
                     "arguments": {"request": "Find an opportunity above $100 that fits in 40 hours."},
                 },
-            }
+            }, session_id
         )
         result = planned["result"]["structuredContent"]
         self.assertEqual(result["intent"], "plan_pursuit")
@@ -253,12 +346,101 @@ class AlexaMCPHttpTests(unittest.TestCase):
                     "name": "respond_to_request",
                     "arguments": {"request": "Compare the alternatives", "case_id": case_id},
                 },
-            }
+            }, session_id
         )
         value = followed_up["result"]["structuredContent"]
         self.assertTrue(value["case_found"])
         self.assertEqual(value["focus"], "comparison")
         self.assertIn("alternatives", value["evidence_card"])
+
+    def test_sessions_are_unique_and_required_for_followup_requests(self):
+        _, first_session = self.initialize()
+        _, second_session = self.initialize()
+        self.assertNotEqual(first_session, second_session)
+
+        self.assert_http_error(
+            400,
+            lambda: self.post({"jsonrpc": "2.0", "id": 7, "method": "tools/list"}),
+        )
+
+        self.assert_http_error(
+            400,
+            lambda: self.post(
+                {"jsonrpc": "2.0", "id": 8, "method": "tools/list"},
+                first_session,
+                **{"MCP-Protocol-Version": "2025-03-26"},
+            ),
+        )
+
+    def test_requests_are_rejected_before_initialized_notification(self):
+        status, _, session_id = self.post(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {"protocolVersion": PROTOCOL_VERSION},
+            }
+        )
+        self.assertEqual(status, 200)
+        self.assert_http_error(
+            400,
+            lambda: self.post({"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, session_id),
+        )
+
+    def test_non_initialize_notifications_are_accepted_without_a_response_body(self):
+        _, session_id = self.initialize()
+        for notification in (
+            {"jsonrpc": "2.0", "method": "notifications/cancelled", "params": {"requestId": 4}},
+            {"jsonrpc": "2.0", "method": "tools/list"},
+        ):
+            status, body, returned_session = self.post(notification, session_id)
+            self.assertEqual(status, 202)
+            self.assertIsNone(body)
+            self.assertIsNone(returned_session)
+
+    def test_accept_content_type_and_expired_session_are_checked(self):
+        initialize_payload = {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {"protocolVersion": PROTOCOL_VERSION},
+        }
+        self.assert_http_error(
+            400,
+            lambda: self.post(initialize_payload, **{"Accept": "application/json"}),
+        )
+
+        self.assert_http_error(
+            415,
+            lambda: self.post(initialize_payload, **{"Content-Type": "text/plain"}),
+        )
+
+        _, session_id = self.initialize()
+        self.server._sessions[session_id]["last_seen"] -= self.server.session_ttl_seconds + 1
+        self.assert_http_error(
+            404,
+            lambda: self.post({"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, session_id),
+        )
+
+    def test_oversized_request_body_is_rejected_before_reading_it(self):
+        connection = http.client.HTTPConnection(
+            "127.0.0.1", self.server.server_address[1], timeout=2
+        )
+        try:
+            connection.request(
+                "POST",
+                "/mcp",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/event-stream",
+                    "Content-Length": str(1024 * 1024 + 1),
+                },
+            )
+            response = connection.getresponse()
+            self.assertEqual(response.status, 413)
+            self.assertIn("1 MiB", response.read().decode())
+        finally:
+            connection.close()
 
 
 if __name__ == "__main__":
