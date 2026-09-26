@@ -50,7 +50,7 @@ const opportunities: Opportunity[] = [
     source: "Devpost",
     title: "Build, Ship, Shape: Amazon Developer Hackathon — Alexa+",
     kind: "Hackathon",
-    payout: 25000,
+    payout: 15000,
     probability: 1,
     hours: 40,
     confidence: 25,

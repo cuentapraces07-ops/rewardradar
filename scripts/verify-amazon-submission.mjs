@@ -119,13 +119,15 @@ check(
     && server.includes('"name": "respond_to_request"'),
 );
 const amazonScenario = fixture.find((row) => row.source === "Amazon Developer Hackathon · Alexa+");
+const amazonUiOpportunity = app.match(/title: "Build, Ship, Shape: Amazon Developer Hackathon — Alexa\+",[\s\S]*?payout:\s*(\d+)/);
 const namedExpiredRows = fixture.filter((row) =>
   ["Agents for Humans — Professional Agents", "Steve Agent Arena — highest individual prize"].includes(row.title),
 );
 check(
-  "Amazon cash scenario discloses unmeasured probability and owner gates",
+  "Amazon cash scenario matches the no-meeting second-place tier and discloses owner gates",
   amazonScenario?.status === "open"
     && amazonScenario?.payout_usd === 15000
+    && Number(amazonUiOpportunity?.[1]) === 15000
     && amazonScenario?.base_probability === 0.01
     && /illustrative/i.test(amazonScenario?.probability_basis ?? "")
     && /no empirical/i.test(amazonScenario?.probability_basis ?? "")
