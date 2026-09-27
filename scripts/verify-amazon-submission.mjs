@@ -148,7 +148,13 @@ check(
     && app.includes("expireByDeadline(item, now)"),
 );
 check("local submission draft remains unsubmitted", /local submission draft/i.test(draft) && /owner-controlled/i.test(readiness));
-check("friction log is local only", /not submitted/i.test(friction) && /up to a 10% bonus/i.test(friction));
+const frictionLogReady = /^# Amazon hackathon friction log: Alexa\+ MCP session isolation$/m.test(friction)
+  && ["Task:", "Steps:", "Expected:", "Actual:", "Severity:", "Workaround:", "Actionable suggestion:"].every((field) => friction.includes(`**${field}**`))
+  && /up to a 10% bonus/i.test(friction)
+  && /not a report that an Amazon service failed/i.test(friction)
+  && /71c573d/.test(friction)
+  && !/draft, not submitted|owner must review/i.test(friction);
+check("friction log is publication-ready and evidence-scoped", frictionLogReady);
 check("field map covers owner gates", /GitHub username/i.test(fieldMap) && /Final submission/i.test(fieldMap) && /current state.*not verified/i.test(fieldMap));
 const amazonMaterials = [draft, readiness, alexaDocs, devpostCopy, productFeedback].join("\n");
 check(

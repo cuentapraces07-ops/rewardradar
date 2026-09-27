@@ -1,55 +1,46 @@
-# Amazon hackathon friction log (draft, not submitted)
+# Amazon hackathon friction log: Alexa+ MCP session isolation
 
-Amazon's current rules say friction-log entries may receive up to a 10% bonus
-during Stage 1. These entries are truthful local observations, not a claim of
-Amazon support, an official bug report, or a submission. Source:
+This entry describes an implementation issue found in RewardRadar's own
+self-hosted MCP prototype and reproduced with local loopback HTTP tests. It is
+not a report that an Amazon service failed, and it does not imply Amazon
+reviewed or endorsed the project. No Amazon service, account, or credentials
+were used to reproduce it.
+
+The hackathon rules say friction-log entries may receive up to a 10% bonus in
+Stage 1 judging. This is a possible score adjustment, not a guaranteed bonus,
+award, or payment. Source:
 <https://amazonappdev2026.devpost.com/rules>.
 
-## Entry 1 — credential-free local replay
+## Entry 1 — isolating Streamable HTTP MCP sessions
 
-- **Task:** run the self-hosted MCP demo from a clean checkout.
-- **Expected:** a reviewer can exercise the Alexa+-style surface without
-  configuring AWS credentials.
-- **Actual:** the local fixture path runs through `python -m agent.demo` and
-  `python -m agent.alexa_mcp_server`; no cloud account is required.
-- **Severity:** low; this is a deliberate prototype boundary.
-- **Workaround:** use the checked-in fixture and the visible disclosure; an
-  owner-controlled production deployment would require HTTPS and a reviewed
-  live adapter.
-- **Actionable suggestion:** keep the first-run MCP quickstart credential-free
-  and make the live-source boundary explicit in the CLI output.
+- **Task:** implement the Alexa+ track's self-hosted MCP endpoint using
+  Streamable HTTP and protocol version `2025-11-25`.
+- **Steps:** send two independent `initialize` requests, then send each
+  client's follow-up requests using the returned session ID; exercise the
+  handshake, initialized notification, tools, and session expiry in the
+  loopback HTTP suite.
+- **Expected:** each initialized session can be identified and managed
+  independently. The MCP transport specification says a session ID should be
+  globally unique and cryptographically secure.
+- **Actual:** the first server implementation used one process-wide session ID
+  for every client. We changed it to create a cryptographically random ID per
+  initialization and track protocol version, initialization state, and idle
+  expiry per session.
+- **Severity:** medium — clients could not be represented as distinct
+  protocol sessions, so session lifecycle and isolation were not modeled
+  correctly.
+- **Workaround:** maintain a per-initialization session record with a bounded
+  idle lifetime, require the negotiated protocol header on follow-up requests,
+  and cover independent clients and expiry with loopback tests.
+- **Actionable suggestion:** publish a compact Alexa+-oriented MCP example or
+  checklist covering independent initialization, session-ID uniqueness,
+  required headers, and reconnect behavior.
 
-## Entry 2 — evidence signals are easy to confuse with money
+## Evidence and scope
 
-- **Task:** use an agent to rank advertised opportunities after competitor and
-  CI activity changes.
-- **Expected:** the voice response distinguishes pressure, delivery risk and
-  acceptance gates from a verified payout.
-- **Actual:** the `plan_pursuit` tool returns a bounded fixture recommendation,
-  source, constraints, disclosure, and an owner-confirmation gate; it never
-  turns a signal into a payout claim.
-- **Severity:** important; omitting this distinction could mislead a builder.
-- **Workaround:** show source, status, interpretation and the owner gate in the
-  same response.
-- **Actionable suggestion:** expose uncertainty as a first-class field in
-  agentic interfaces instead of burying it in a long prompt.
-
-## Entry 3 — open-source contribution proof
-
-- **Task:** demonstrate the Open Source mini-challenge contribution.
-- **Expected:** the entry can provide a repository, contribution URL, GitHub
-  username and a plain-language explanation.
-- **Actual:** the public repository, license, tests, demo and local evidence
-  are prepared, but no new external submission or PR is claimed here.
-- **Severity:** important; the contribution URL must be owner-verified before
-  entry.
-- **Workaround:** keep the draft fields and commit/test evidence together in
-  the local submission packet.
-- **Actionable suggestion:** add a preflight validator for required URLs and
-  contribution metadata before the final submit control is enabled.
-
-## Submission boundary
-
-No friction-log entry has been sent to Amazon. The owner must verify the final
-rules, eligibility, repository state and public links immediately before any
-submission.
+- The initial behavior and corrective change are visible in commit
+  [`71c573d`](https://github.com/cuentapraces07-ops/rewardradar/commit/71c573d).
+- Current coverage is in
+  [`tests/test_alexa_mcp_http.py`](https://github.com/cuentapraces07-ops/rewardradar/blob/codex/amazon-preflight-v0.2.1/tests/test_alexa_mcp_http.py).
+- The protocol reference is the [MCP Streamable HTTP specification for
+  `2025-11-25`](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports).
