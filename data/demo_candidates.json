@@ -5,7 +5,7 @@
     "url": "https://agentsforhumans.devpost.com/",
     "payout_usd": 5000,
     "estimated_hours": 34,
-    "status": "open",
+    "status": "closed",
     "claimers": 0,
     "locked": false,
     "escrowed": true,
@@ -13,8 +13,10 @@
     "acceptance_clear": true,
     "repository_active": true,
     "payout_rail_ready": false,
-    "deadline_days": 5,
-    "base_probability": 0.08
+    "deadline_days": 0,
+    "base_probability": 0.08,
+    "deadline_at": "2026-09-14T23:59:59Z",
+    "probability_basis": "Historical scenario input; source deadline has passed and probability is forced to zero."
   },
   {
     "source": "Execution Market",
@@ -22,7 +24,7 @@
     "url": "https://execution.market/",
     "payout_usd": 1.78,
     "estimated_hours": 2.5,
-    "status": "open",
+    "status": "snapshot_only",
     "claimers": 0,
     "locked": false,
     "escrowed": true,
@@ -31,7 +33,8 @@
     "repository_active": true,
     "payout_rail_ready": false,
     "deadline_days": null,
-    "base_probability": 0.72
+    "base_probability": 0.72,
+    "probability_basis": "Historical fixture input; live task inventory must be rechecked before use."
   },
   {
     "source": "Opire",
@@ -48,7 +51,8 @@
     "repository_active": true,
     "payout_rail_ready": false,
     "deadline_days": null,
-    "base_probability": 0.03
+    "base_probability": 0.03,
+    "probability_basis": "Illustrative risk scenario; not a measured payment probability."
   },
   {
     "source": "Superteam Earn",
@@ -56,7 +60,7 @@
     "url": "https://superteam.fun/earn/listing/steve-agent-arena-launch-your-agent-and-win-500-usdc",
     "payout_usd": 250,
     "estimated_hours": 12,
-    "status": "open",
+    "status": "closed",
     "claimers": 10,
     "locked": false,
     "escrowed": false,
@@ -64,7 +68,28 @@
     "acceptance_clear": true,
     "repository_active": true,
     "payout_rail_ready": false,
-    "deadline_days": 9,
-    "base_probability": 0.1
+    "deadline_days": 0,
+    "base_probability": 0.1,
+    "deadline_at": "2026-09-19T23:59:59Z",
+    "probability_basis": "Historical scenario input; listing deadline has passed and probability is forced to zero."
+  },
+  {
+    "source": "Amazon Developer Hackathon · Alexa+",
+    "title": "Build, Ship, Shape: Alexa+ track — second-place cash scenario",
+    "url": "https://amazonappdev2026.devpost.com/",
+    "payout_usd": 15000,
+    "estimated_hours": 40,
+    "status": "open",
+    "claimers": 0,
+    "locked": false,
+    "escrowed": false,
+    "sponsor_verified": true,
+    "acceptance_clear": true,
+    "repository_active": true,
+    "payout_rail_ready": false,
+    "deadline_days": 29,
+    "base_probability": 0.01,
+    "deadline_at": "2026-10-23T12:00:00-07:00",
+    "probability_basis": "1% illustrative planning scenario only; no empirical win-rate data. Prize outcome and eligibility are unverified. The 1st-place bundle lists a meeting, which the owner has ruled out; do not accept any award condition requiring a meeting."
   }
 ]

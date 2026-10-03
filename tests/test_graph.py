@@ -32,7 +32,8 @@ class GraphExecutionTests(unittest.TestCase):
             self.assertIn(expected_tool, tool_names)
             self.assertGreaterEqual(result_count, 1)
 
-        self.assertIn("PURSUE", str(result))
+        self.assertIn("WATCH", str(result))
+        self.assertNotIn("PURSUE", str(result))
 
     def test_fixture_mode_exposes_exactly_one_checked_in_data_tool_per_node(self):
         graph = create_specialist_graph(model=DemoModel(), fixture_only=True)

@@ -47,16 +47,16 @@ class DemoModel(Model):
             if isinstance(block, dict)
         )
         if "current specialist role: collect" in prompt:
-            answer = "SCOUT complete: loaded 4 representative candidates from the disclosed fixture."
+            answer = "SCOUT complete: loaded 5 representative candidates from the disclosed fixture."
             tool_name = "load_demo_inventory"
         elif "current specialist role: cross-check" in prompt:
-            answer = "VERIFIER complete: preserved canonical status, lock, URL, and competition evidence for all 4."
+            answer = "VERIFIER complete: preserved canonical status, lock, URL, and competition evidence for all 5."
             tool_name = "verify_demo_inventory"
         elif "current specialist role: identify" in prompt:
             answer = "RISK complete: locked issues, crowded claims, and non-escrowed rewards dominate the inventory."
             tool_name = "score_demo_inventory"
         elif "current specialist role: rank" in prompt:
-            answer = "ROI complete: PURSUE the cash hackathon; AVOID the sub-floor market, locked crowded bounty, and capital-gated social competition."
+            answer = "ROI complete: WATCH the Amazon Alexa+ second-place cash scenario under the disclosed illustrative 1% input; AVOID expired and historical rows. The scenario is not an empirical win-rate estimate or a payment guarantee."
             tool_name = "rank_demo_inventory"
         else:
             answer = "RewardRadar audit complete."
